@@ -5,9 +5,7 @@ function needsupdate(created, now, updates)
         return false
     elseif updates == :always
         return true
-    end
-    
-    if updates == :daily
+    elseif updates == :daily
         return Date(now) > Date(created)
     elseif updates == :weekly
         return firstdayofweek(now) > firstdayofweek(created)
