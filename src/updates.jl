@@ -1,4 +1,4 @@
-import Base.Dates: year, toprev, firstdayofmonth, firstdayofweek
+import Base.Dates: year, toprev, firstdayofmonth
 
 function needsupdate(created, now, updates)
     if updates == :never
@@ -7,13 +7,11 @@ function needsupdate(created, now, updates)
         return true
     elseif updates == :daily
         return Date(now) > Date(created)
-    elseif updates == :weekly
-        return firstdayofweek(now) > firstdayofweek(created)
     elseif updates == :monthly
         return firstdayofmonth(now) > firstdayofmonth(created)
     elseif updates == :yearly
         return year(now) > year(created)
-    elseif updates == :mondays
+    elseif updates in (:mondays, :weekly)
         return toprev(now, 1, same=true) > toprev(created, 1, same=true)
     elseif updates == :tuesdays
         return toprev(now, 2, same=true) > toprev(created, 2, same=true)

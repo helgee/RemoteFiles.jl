@@ -32,7 +32,7 @@ function download(rf::RemoteFile; verbose::Bool=false)
     if !isdir(rf.dir)
         mkpath(rf.dir)
     end
-    
+
     verbose && info("Downloading '$(rf.uri)'.")
     tries = 0
     success = false
@@ -43,7 +43,7 @@ function download(rf::RemoteFile; verbose::Bool=false)
             success = true
         catch err
             if isa(err, ErrorException)
-                if verbose 
+                if verbose
                     warn("Download failed with error: $(err.msg)")
                     info("Retrying in $(rf.wait) seconds.")
                     sleep(rf.wait)
@@ -53,7 +53,7 @@ function download(rf::RemoteFile; verbose::Bool=false)
             end
         end
     end
-    
+
     if success
         if isfile(file) && verbose
             info("File '$file' was successfully updated.")
