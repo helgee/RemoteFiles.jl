@@ -1,6 +1,7 @@
 using RemoteFiles
 using Base.Test
 
+rm("image.png", force=true)
 
 function capture_stderr(f::Function)
     let fname = tempname()
@@ -56,6 +57,15 @@ end
     download(r)
     c2 = RemoteFiles.createtime(r.file)
     @test c1 != c2
+    rm(r.file, force=true)
+
+    r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
+    download(r)
+    r = RemoteFile("https://garbage/garbage/garbage.garbage", file="image.png", wait=1, retries=1, failed=:warn, updates=:always)
+    output = capture_stderr() do
+        download(r)
+    end
+    @test contains(output, "Local file was not updated.")
     rm(r.file, force=true)
 end
 
