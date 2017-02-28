@@ -52,6 +52,7 @@ end
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
     download(r)
     c1 = RemoteFiles.createtime(r.file)
+    sleep(1)
     download(r)
     c2 = RemoteFiles.createtime(r.file)
     @test c1 != c2
