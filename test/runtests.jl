@@ -2,6 +2,7 @@ using RemoteFiles
 using Base.Test
 
 rm("image.png", force=true)
+rm(joinpath("tmp", "image.png"), force=true, recursive=true)
 
 function capture_stderr(f::Function)
     let fname = tempname()
@@ -24,12 +25,18 @@ end
     r = RemoteFile("https://httpbin.org/image/png", file="image.png")
     @test r.file == "image.png"
 
+
     output = capture_stderr() do
         download(r, verbose=true)
     end
     @test output == "INFO: Downloading 'https://httpbin.org/image/png'.\nINFO: File 'image.png' was successfully downloaded.\n"
     @test isfile(r.file)
     rm(r.file, force=true)
+
+    r = RemoteFile("https://httpbin.org/image/png", file="image.png", dir="tmp")
+    download(r)
+    @test isfile(joinpath("tmp","image.png"))
+    rm(joinpath("tmp", "image.png"), force=true, recursive=true)
 
     @test_throws ErrorException RemoteFile("garbage")
 

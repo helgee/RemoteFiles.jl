@@ -1,3 +1,4 @@
+import Base: download
 import Base.Dates: unix2datetime, now
 
 if is_windows()

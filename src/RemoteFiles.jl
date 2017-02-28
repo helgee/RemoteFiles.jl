@@ -2,8 +2,6 @@ module RemoteFiles
 
 using URIParser
 
-import Base: download
-
 export RemoteFile
 
 type RemoteFile
@@ -11,7 +9,6 @@ type RemoteFile
     file::String
     dir::String
     updates::Symbol
-    timeout::Int
     retries::Int
     wait::Int
     failed::Symbol
@@ -21,7 +18,6 @@ function RemoteFile(uri::URI;
                     file::String="",
                     dir::String=".",
                     updates::Symbol=:never,
-                    timeout::Int=0,
                     retries::Int=3,
                     wait::Int=5,
                     failed::Symbol=:error,
@@ -33,7 +29,7 @@ function RemoteFile(uri::URI;
         end
     end
 
-    RemoteFile(uri, file, dir, updates, timeout, retries, wait, failed)
+    RemoteFile(uri, file, dir, updates, retries, wait, failed)
 end
 RemoteFile(uri::String; kwargs...) = RemoteFile(URI(uri); kwargs...)
 
