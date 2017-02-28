@@ -2,11 +2,11 @@ using RemoteFiles
 using Base.Test
 
 
-function capture_stdout(f::Function)
+function capture_stderr(f::Function)
     let fname = tempname()
         try
             open(fname, "w") do fout
-                redirect_stdout(fout) do
+                redirect_stderr(fout) do
                     f()
                 end
             end
@@ -23,7 +23,10 @@ end
     r = RemoteFile("https://httpbin.org/image/png", file="image.png")
     @test r.file == "image.png"
 
-    download(r, verbose=true)
+    output = capture_stderr() do
+        download(r, verbose=true)
+    end
+    @test output == "INFO: Downloading 'https://httpbin.org/image/png'.\nINFO: File 'image.png' was successfully downloaded.\n"
     @test isfile(r.file)
     rm(r.file, force=true)
 
@@ -32,18 +35,24 @@ end
     r = RemoteFile("https://garbage/garbage/garbage.garbage", wait=0, retries=0)
     @test_throws ErrorException download(r)
 
+    r = RemoteFile("https://garbage/garbage/garbage.garbage", wait=0, retries=0, failed=:warn)
+    @test_throws ErrorException download(r)
+
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:never)
-    download(r, verbose=true)
+    download(r)
     c1 = RemoteFiles.createtime(r.file)
-    download(r, verbose=true)
+    output = capture_stderr() do
+        download(r, verbose=true)
+    end
+    @test output == "INFO: File 'image.png' is up-to-date.\n"
     c2 = RemoteFiles.createtime(r.file)
     @test c1 == c2
     rm(r.file, force=true)
 
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
-    download(r, verbose=true)
+    download(r)
     c1 = RemoteFiles.createtime(r.file)
-    download(r, verbose=true)
+    download(r)
     c2 = RemoteFiles.createtime(r.file)
     @test c1 != c2
     rm(r.file, force=true)

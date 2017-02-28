@@ -56,13 +56,13 @@ function download(rf::RemoteFile; verbose::Bool=false)
 
     if success
         if isfile(file) && verbose
-            info("File '$file' was successfully updated.")
+            info("File '$(rf.file)' was successfully updated.")
         elseif verbose
-            info("File '$file' was successfully downloaded.")
+            info("File '$(rf.file)' was successfully downloaded.")
         end
         mv(tempfile, file, remove_destination=true)
     else
-        if rf.failed == :error || (rf.failed = :warn && !isfile(file))
+        if rf.failed == :error || (rf.failed == :warn && !isfile(file))
             error("Download of '$(rf.uri)' failed after $(rf.retries) retries.")
         elseif rf.failed == :warn
             warn("Download of '$(rf.uri)' failed after $(rf.retries) retries. Local file was not updated.")
