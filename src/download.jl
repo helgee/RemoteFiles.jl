@@ -56,19 +56,33 @@ function download(rf::RemoteFile; verbose::Bool=false)
     end
 
     if success
-        if isfile(file) && verbose
-            info("File '$(rf.file)' was successfully updated.")
-        elseif verbose
-            info("File '$(rf.file)' was successfully downloaded.")
+        update = true
+        if isfile(file)
+            if samecontent(tempfile, file) && !rf.update_unchanged
+                update = false
+                verbose && info("File '$(rf.file)' has not changed.")
+            else
+                verbose && info("File '$(rf.file)' was successfully updated.")
+            end
+        else
+            verbose && info("File '$(rf.file)' was successfully downloaded.")
         end
-        mv(tempfile, file, remove_destination=true)
+        update && mv(tempfile, file, remove_destination=true)
     else
         if rf.failed == :warn && isfile(file)
-            warn("Download of '$(rf.uri)' failed after $(rf.retries) retries. Local file was not updated.")
+            warn("Download of '$(rf.uri)' failed after $(rf.retries) retries. "
+                * "Local file was not updated.")
         elseif rf.failed == :error || (rf.failed == :warn && !isfile(file))
             error("Download of '$(rf.uri)' failed after $(rf.retries) retries.")
         end
     end
+    rm(tempfile, force=true)
 end
 
 createtime(file) = unix2datetime(stat(file).ctime)
+
+function samecontent(file1, file2)
+    h1 = hash(open(read, file1, "r"))
+    h2 = hash(open(read, file2, "r"))
+    h1 == h2
+end

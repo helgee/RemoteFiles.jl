@@ -69,15 +69,29 @@ end
 
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
     download(r)
-    r = RemoteFile("https://garbage/garbage/garbage.garbage", file="image.png", wait=1, retries=1, failed=:warn, updates=:always)
+    r = RemoteFile("https://garbage/garbage/garbage.garbage", file="image.png",
+        wait=1, retries=1, failed=:warn, updates=:always)
     output = capture_stderr() do
         download(r)
     end
     @test contains(output, "Local file was not updated.")
     rm(r.file, force=true)
+
+    r = RemoteFile("https://httpbin.org/image/png", file="image.png",
+        updates=:always, update_unchanged=false)
+    download(r)
+    @test RemoteFiles.samecontent("image.png", "image.png") == true
+    c1 = RemoteFiles.createtime(r.file)
+    sleep(1)
+    download(r)
+    c2 = RemoteFiles.createtime(r.file)
+    @test c1 == c2
+    rm(r.file, force=true)
 end
 
 @testset "Updates" begin
+    @test RemoteFiles.samecontent(@__FILE__, @__FILE__) == true
+
     updates = :helllottatimes
     created = DateTime(2017, 2, 28)
     now = DateTime(2017, 3, 6)

@@ -12,16 +12,18 @@ type RemoteFile
     retries::Int
     wait::Int
     failed::Symbol
+    update_unchanged::Bool
 end
 
 function RemoteFile(uri::URI;
-                    file::String="",
-                    dir::String=".",
-                    updates::Symbol=:never,
-                    retries::Int=3,
-                    wait::Int=5,
-                    failed::Symbol=:error,
-                   )
+    file::String="",
+    dir::String=".",
+    updates::Symbol=:never,
+    retries::Int=3,
+    wait::Int=5,
+    failed::Symbol=:error,
+    update_unchanged::Bool=true,
+)
     if isempty(file)
         file = filename(uri)
         if isempty(file)
@@ -29,7 +31,7 @@ function RemoteFile(uri::URI;
         end
     end
 
-    RemoteFile(uri, file, dir, updates, retries, wait, failed)
+    RemoteFile(uri, file, dir, updates, retries, wait, failed, update_unchanged)
 end
 RemoteFile(uri::String; kwargs...) = RemoteFile(URI(uri); kwargs...)
 
