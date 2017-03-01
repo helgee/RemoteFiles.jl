@@ -44,7 +44,7 @@ macro RemoteFile(uri, args...)
     dir = :(abspath(isa(@__FILE__, Void) ? "." : dirname(@__FILE__), "..", "data"))
     kw = Expr[]
     for arg in args
-        if isa(arg, Expr) && arg.head == :(=)
+        if isa(arg, Expr) && arg.head in (:(=), :kw)
             push!(kw, Expr(:kw, arg.args...))
         end
     end
