@@ -2,7 +2,7 @@ using RemoteFiles
 using Base.Test
 
 rm("image.png", force=true)
-rm(joinpath("tmp", "image.png"), force=true, recursive=true)
+rm("tmp", force=true, recursive=true)
 
 function capture_stderr(f::Function)
     let fname = tempname()
@@ -29,7 +29,8 @@ end
     output = capture_stderr() do
         download(r, verbose=true)
     end
-    @test output == "INFO: Downloading 'https://httpbin.org/image/png'.\nINFO: File 'image.png' was successfully downloaded.\n"
+    @test contains(output, "Downloading")
+    @test contains(output, "successfully downloaded")
     @test isfile(r.file)
     rm(r.file, force=true)
 
@@ -52,7 +53,7 @@ end
     output = capture_stderr() do
         download(r, verbose=true)
     end
-    @test output == "INFO: File 'image.png' is up-to-date.\n"
+    @test contains(output, "up-to-date")
     c2 = RemoteFiles.createtime(r.file)
     @test c1 == c2
     rm(r.file, force=true)
