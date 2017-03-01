@@ -37,7 +37,7 @@ end
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", dir="tmp")
     download(r)
     @test isfile(joinpath("tmp","image.png"))
-    rm(joinpath("tmp", "image.png"), force=true, recursive=true)
+    rm(r, force=true)
 
     @test_throws ErrorException RemoteFile("garbage")
 
@@ -56,7 +56,7 @@ end
     @test contains(output, "up-to-date")
     c2 = RemoteFiles.createtime(r.file)
     @test c1 == c2
-    rm(r.file, force=true)
+    rm(r, force=true)
 
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
     download(r)
@@ -65,7 +65,7 @@ end
     download(r)
     c2 = RemoteFiles.createtime(r.file)
     @test c1 != c2
-    rm(r.file, force=true)
+    rm(r, force=true)
 
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
     download(r)
@@ -75,7 +75,7 @@ end
         download(r)
     end
     @test contains(output, "Local file was not updated.")
-    rm(r.file, force=true)
+    rm(r, force=true)
 
     r = RemoteFile("https://httpbin.org/image/png", file="image.png",
         updates=:always, update_unchanged=false)
@@ -86,7 +86,15 @@ end
     download(r)
     c2 = RemoteFiles.createtime(r.file)
     @test c1 == c2
-    rm(r.file, force=true)
+    rm(r, force=true)
+
+    try
+        r = @RemoteFile "https://httpbin.org/image/png" file="image.png"
+        download(r)
+        @test isfile(path(r))
+    finally
+        rm(r, force=true)
+    end
 end
 
 @testset "Updates" begin

@@ -1,10 +1,10 @@
 import Base: download
 import Base.Dates: unix2datetime, now
 
-function download(rf::RemoteFile; verbose::Bool=false)
+function download(rf::RemoteFile; verbose::Bool=false, force::Bool=false)
     file = joinpath(rf.dir, rf.file)
 
-    if isfile(file)
+    if isfile(file) && !force
         created = createtime(file)
         dtnow = now()
         if !needsupdate(created, dtnow, rf.updates)
@@ -41,7 +41,7 @@ function download(rf::RemoteFile; verbose::Bool=false)
 
     if success
         update = true
-        if isfile(file)
+        if isfile(file) && !force
             if samecontent(tempfile, file) && !rf.update_unchanged
                 update = false
                 verbose && info("File '$(rf.file)' has not changed.")

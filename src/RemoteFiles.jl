@@ -2,7 +2,9 @@ module RemoteFiles
 
 using URIParser
 
-export RemoteFile
+import Base: rm
+
+export RemoteFile, @RemoteFile, path, rm
 
 type RemoteFile
     uri::URI
@@ -27,15 +29,34 @@ function RemoteFile(uri::URI;
     if isempty(file)
         file = filename(uri)
         if isempty(file)
-            error("File name could not be extracted from URI '$uri'. Try setting it manually.")
+            error("File name could not be extracted from URI '$uri'. "
+                * "Try setting it manually.")
         end
     end
 
-    RemoteFile(uri, file, dir, updates, retries, wait, failed, update_unchanged)
+    RemoteFile(uri, file, abspath(dir), updates, retries, wait, failed, update_unchanged)
 end
 RemoteFile(uri::String; kwargs...) = RemoteFile(URI(uri); kwargs...)
 
 filename(uri::URI) = split(split(uri.path, ';')[1], '/')[end]
+
+macro RemoteFile(uri, args...)
+    dir = :(abspath(isa(@__FILE__, Void) ? "." : dirname(@__FILE__), "..", "data"))
+    if VERSION < v"0.6.0"
+        kw = Expr[]
+        for arg in args
+            if isa(arg, Expr) && arg.head == :(=)
+                push!(kw, Expr(:kw, arg.args...))
+            end
+        end
+    else
+        kw = (esc(arg) for arg in args if isa(arg, Expr) && arg.head == :(=))
+    end
+    return :(RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
+end
+
+path(rf::RemoteFile) = joinpath(rf.dir, rf.file)
+rm(rf::RemoteFile; force=false) = rm(path(rf), force=force)
 
 include("updates.jl")
 include("download.jl")
