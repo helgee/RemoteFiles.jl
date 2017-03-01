@@ -88,13 +88,10 @@ end
     @test c1 == c2
     rm(r, force=true)
 
-    try
-        r = @RemoteFile "https://httpbin.org/image/png" file="image.png"
-        download(r)
-        @test isfile(path(r))
-    finally
-        rm(r, force=true)
-    end
+    r = @RemoteFile "https://httpbin.org/image/png" file="image.png"
+    download(r)
+    @test isfile(path(r))
+    rm(r, force=true)
 end
 
 @testset "Updates" begin

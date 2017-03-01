@@ -42,15 +42,11 @@ filename(uri::URI) = split(split(uri.path, ';')[1], '/')[end]
 
 macro RemoteFile(uri, args...)
     dir = :(abspath(isa(@__FILE__, Void) ? "." : dirname(@__FILE__), "..", "data"))
-    if VERSION < v"0.6.0"
-        kw = Expr[]
-        for arg in args
-            if isa(arg, Expr) && arg.head == :(=)
-                push!(kw, Expr(:kw, arg.args...))
-            end
+    kw = Expr[]
+    for arg in args
+        if isa(arg, Expr) && arg.head == :(=)
+            push!(kw, Expr(:kw, arg.args...))
         end
-    else
-        kw = (esc(arg) for arg in args if isa(arg, Expr) && arg.head == :(=))
     end
     return :(RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
 end
