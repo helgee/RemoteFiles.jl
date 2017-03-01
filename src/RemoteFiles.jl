@@ -2,9 +2,9 @@ module RemoteFiles
 
 using URIParser
 
-import Base: rm
+import Base: rm, isfile
 
-export RemoteFile, @RemoteFile, path, rm
+export RemoteFile, @RemoteFile, path, rm, isfile
 
 type RemoteFile
     uri::URI
@@ -53,6 +53,7 @@ end
 
 path(rf::RemoteFile) = joinpath(rf.dir, rf.file)
 rm(rf::RemoteFile; force=false) = rm(path(rf), force=force)
+isfile(rf::RemoteFile) = isfile(path(rf))
 
 include("updates.jl")
 include("download.jl")

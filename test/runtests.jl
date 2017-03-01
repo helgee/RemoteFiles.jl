@@ -31,12 +31,12 @@ end
     end
     @test contains(output, "Downloading")
     @test contains(output, "successfully downloaded")
-    @test isfile(r.file)
-    rm(r.file, force=true)
+    @test isfile(r)
+    rm(r, force=true)
 
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", dir="tmp")
     download(r)
-    @test isfile(joinpath("tmp","image.png"))
+    @test isfile(r)
     rm(r, force=true)
 
     @test_throws ErrorException RemoteFile("garbage")
@@ -72,8 +72,10 @@ end
     r = RemoteFile("https://garbage/garbage/garbage.garbage", file="image.png",
         wait=1, retries=1, failed=:warn, updates=:always)
     output = capture_stderr() do
-        download(r)
+        download(r, verbose=true)
     end
+    @test contains(output, "failed")
+    @test contains(output, "Retrying")
     @test contains(output, "Local file was not updated.")
     rm(r, force=true)
 
@@ -90,7 +92,7 @@ end
 
     r = @RemoteFile "https://httpbin.org/image/png" file="image.png"
     download(r)
-    @test isfile(path(r))
+    @test isfile(r)
     rm(r, force=true)
 end
 
