@@ -1,22 +1,6 @@
 import Base: download
 import Base.Dates: unix2datetime, now
 
-if is_windows()
-    function download(uri::URI, filename::AbstractString)
-        res = ccall((:URLDownloadToFileW,:urlmon),stdcall,Cuint,
-                    (Ptr{Void},Cwstring,Cwstring,Cuint,Ptr{Void}),C_NULL,string(uri),filename,0,C_NULL)
-        if res != 0
-            error("automatic download failed (error: $res): $uri")
-        end
-        filename
-    end
-else
-    function download(uri::URI, filename::AbstractString)
-        run(`curl -o $filename -L $(string(uri))`)
-        filename
-    end
-end
-
 function download(rf::RemoteFile; verbose::Bool=false)
     file = joinpath(rf.dir, rf.file)
 
@@ -40,7 +24,7 @@ function download(rf::RemoteFile; verbose::Bool=false)
     while tries < rf.retries
         tries += 1
         try
-            download(rf.uri, tempfile)
+            download(string(rf.uri), tempfile)
             success = true
         catch err
             if isa(err, ErrorException)
