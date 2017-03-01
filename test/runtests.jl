@@ -96,6 +96,33 @@ end
     rm(r, force=true)
 end
 
+@testset "RemoteFileSets" begin
+    set = RemoteFileSet(
+        file1=RemoteFile("https://httpbin.org/image/png", file="image1.png"),
+        file2=RemoteFile("https://httpbin.org/image/png", file="image2.png"),
+    )
+    rm(set, force=true)
+    download(set)
+    @test isfile(set[:file1])
+    @test isfile(set[:file2])
+    @test isfile(set["file1"])
+    @test isfile(set["file2"])
+    @test isfile(set)
+    rm(set)
+
+    set = @RemoteFileSet begin
+        file1 = @RemoteFile "https://httpbin.org/image/png" file="image1.png"
+        file2 = @RemoteFile "https://httpbin.org/image/png" file="image2.png"
+    end
+    download(set)
+    @test isfile(set[:file1])
+    @test isfile(set[:file2])
+    @test isfile(set["file1"])
+    @test isfile(set["file2"])
+    @test isfile(set)
+    rm(set, force=true)
+end
+
 @testset "Updates" begin
     @test RemoteFiles.samecontent(@__FILE__, @__FILE__) == true
 
@@ -192,3 +219,4 @@ end
     now = DateTime(2017, 2, 28)
     @test RemoteFiles.needsupdate(created, now, updates) == false
 end
+
