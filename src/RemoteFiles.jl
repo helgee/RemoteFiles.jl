@@ -5,7 +5,7 @@ using URIParser
 import Base: rm, isfile, getindex, download, rm
 
 export RemoteFile, @RemoteFile, path, rm, isfile, RemoteFileSet, @RemoteFileSet,
-    files
+    files, paths
 
 type RemoteFile
     uri::URI
@@ -91,8 +91,12 @@ end
 files(rfs::RemoteFileSet) = collect(values(rfs.files))
 getindex(rfs::RemoteFileSet, key::Symbol) = rfs.files[key]
 getindex(rfs::RemoteFileSet, key::String) = rfs.files[Symbol(key)]
+isfile(rfs::RemoteFileSet, file) = isfile(rfs[file])
 isfile(rfs::RemoteFileSet) = all(isfile.(files(rfs)))
+rm(rfs::RemoteFileSet, file) = rm(rfs[file])
 rm(rfs::RemoteFileSet; force=false) = foreach(x->rm(x, force=force), files(rfs))
+path(rfs::RemoteFileSet, file) = path(rfs[file])
+paths(rfs::RemoteFileSet) = map(path, files(rfs))
 
 include("updates.jl")
 include("download.jl")
