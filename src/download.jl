@@ -1,14 +1,33 @@
 import Base: download
 import Base.Dates: unix2datetime, now
 
-function download(rf::RemoteFile; verbose::Bool=false, force::Bool=false)
+if is_windows()
+    function download(url::AbstractString, filename::AbstractString, verbose::Bool)
+        res = ccall((:URLDownloadToFileW,:urlmon),stdcall,Cuint,
+                    (Ptr{Void},Cwstring,Cwstring,Cuint,Ptr{Void}),C_NULL,url,filename,0,C_NULL)
+        if res != 0
+            error("Download failed.")
+        end
+    end
+else
+    function download(url::AbstractString, filename::AbstractString, verbose::Bool)
+        if verbose
+            run(`curl -o $filename -L $url`)
+        else
+            run(`curl -s -o $filename -L $url`)
+        end
+    end
+end
+
+
+function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false, force::Bool=false)
     file = joinpath(rf.dir, rf.file)
 
     if isfile(file) && !force
         created = createtime(file)
         dtnow = now()
         if !needsupdate(created, dtnow, rf.updates)
-            verbose && info("File '$(rf.file)' is up-to-date.")
+            !quiet && info("File '$(rf.file)' is up-to-date.")
             return
         end
     end
@@ -18,21 +37,21 @@ function download(rf::RemoteFile; verbose::Bool=false, force::Bool=false)
         mkpath(rf.dir)
     end
 
-    verbose && info("Downloading '$(rf.uri)'.")
+    !quiet && info("Downloading file '$(rf.file)' from '$(rf.uri)'.")
     tries = 0
     success = false
     while tries < rf.retries
         tries += 1
         try
-            download(string(rf.uri), tempfile)
+            download(string(rf.uri), tempfile, verbose)
             success = true
         catch err
             if isa(err, ErrorException)
-                if verbose
+                if !quiet
                     warn("Download failed with error: $(err.msg)")
                     info("Retrying in $(rf.wait) seconds.")
-                    sleep(rf.wait)
                 end
+                sleep(rf.wait)
             else
                 rethrow(err)
             end
@@ -44,12 +63,12 @@ function download(rf::RemoteFile; verbose::Bool=false, force::Bool=false)
         if isfile(file) && !force
             if samecontent(tempfile, file) && !rf.update_unchanged
                 update = false
-                verbose && info("File '$(rf.file)' has not changed.")
+                !quiet && info("File '$(rf.file)' has not changed. Update skipped.")
             else
-                verbose && info("File '$(rf.file)' was successfully updated.")
+                !quiet && info("File '$(rf.file)' was successfully updated.")
             end
         else
-            verbose && info("File '$(rf.file)' was successfully downloaded.")
+            !quiet && info("File '$(rf.file)' was successfully downloaded.")
         end
         update && mv(tempfile, file, remove_destination=true)
     else

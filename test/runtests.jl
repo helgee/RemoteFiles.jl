@@ -97,7 +97,7 @@ end
 end
 
 @testset "RemoteFileSets" begin
-    set = RemoteFileSet(
+    set = RemoteFileSet("Images",
         file1=RemoteFile("https://httpbin.org/image/png", file="image1.png"),
         file2=RemoteFile("https://httpbin.org/image/png", file="image2.png"),
     )
@@ -110,17 +110,17 @@ end
     @test isfile(set)
     rm(set)
 
-    set = @RemoteFileSet begin
+    set = @RemoteFileSet "Images" begin
         file1 = @RemoteFile "https://httpbin.org/image/png" file="image1.png"
         file2 = @RemoteFile "https://httpbin.org/image/png" file="image2.png"
     end
     download(set)
-    @test isfile(set[:file1])
-    @test isfile(set[:file2])
-    @test isfile(set["file1"])
-    @test isfile(set["file2"])
+    @test isfile(set, :file1)
+    @test isfile(set, :file2)
+    @test all(map(isfile, paths(set)))
     @test isfile(set)
-    rm(set, force=true)
+    rm(set, :file1, force=true)
+    rm(set, :file2, force=true)
 end
 
 @testset "Updates" begin

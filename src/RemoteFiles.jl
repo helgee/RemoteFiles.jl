@@ -57,20 +57,21 @@ rm(rf::RemoteFile; force=false) = rm(path(rf), force=force)
 isfile(rf::RemoteFile) = isfile(path(rf))
 
 immutable RemoteFileSet
+    name::String
     files::Dict{Symbol,RemoteFile}
 end
 
-function RemoteFileSet(;kwargs...)
+function RemoteFileSet(name; kwargs...)
     files = Dict{Symbol,RemoteFile}()
     for (k,v) in kwargs
         if isa(v, RemoteFile)
             merge!(files, Dict(k=>v))
         end
     end
-    RemoteFileSet(files)
+    RemoteFileSet(name, files)
 end
 
-macro RemoteFileSet(ex)
+macro RemoteFileSet(name::String, ex)
     if !isa(ex, Expr) && ex.head == :block
         error("@RemoteFileSet must be used on a code block.")
     end
@@ -85,7 +86,7 @@ macro RemoteFileSet(ex)
             end
         end
     end
-    return :(RemoteFileSet($(kw...)))
+    return :(RemoteFileSet($name, $(kw...)))
 end
 
 files(rfs::RemoteFileSet) = collect(values(rfs.files))
@@ -93,7 +94,7 @@ getindex(rfs::RemoteFileSet, key::Symbol) = rfs.files[key]
 getindex(rfs::RemoteFileSet, key::String) = rfs.files[Symbol(key)]
 isfile(rfs::RemoteFileSet, file) = isfile(rfs[file])
 isfile(rfs::RemoteFileSet) = all(isfile.(files(rfs)))
-rm(rfs::RemoteFileSet, file) = rm(rfs[file])
+rm(rfs::RemoteFileSet, file; force=false) = rm(rfs[file], force=force)
 rm(rfs::RemoteFileSet; force=false) = foreach(x->rm(x, force=force), files(rfs))
 path(rfs::RemoteFileSet, file) = path(rfs[file])
 paths(rfs::RemoteFileSet) = map(path, files(rfs))
@@ -101,9 +102,10 @@ paths(rfs::RemoteFileSet) = map(path, files(rfs))
 include("updates.jl")
 include("download.jl")
 
-function download(rfs::RemoteFileSet; verbose::Bool=false, force::Bool=false)
+function download(rfs::RemoteFileSet; quiet::Bool=true, verbose::Bool=false, force::Bool=false)
+    info("Downloading file set '$(rfs.name)'.")
     @sync for file in values(rfs.files)
-        @async download(file, verbose=verbose, force=force)
+        @async download(file, quiet=quiet, verbose=verbose, force=force)
     end
 end
 
