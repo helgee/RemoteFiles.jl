@@ -15,7 +15,6 @@ type RemoteFile
     retries::Int
     wait::Int
     failed::Symbol
-    update_unchanged::Bool
 end
 
 function RemoteFile(uri::URI;
@@ -34,7 +33,7 @@ function RemoteFile(uri::URI;
         end
     end
 
-    RemoteFile(uri, file, abspath(dir), updates, retries, wait, failed, update_unchanged)
+    RemoteFile(uri, file, abspath(dir), updates, retries, wait, failed)
 end
 RemoteFile(uri::String; kwargs...) = RemoteFile(URI(uri); kwargs...)
 
