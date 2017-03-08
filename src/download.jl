@@ -19,14 +19,16 @@ else
     end
 end
 
+"""
+    download(rf::RemoteFile; force::Bool=false, quiet::Bool=false, verbose::Bool=false)
 
+Download a `RemoteFile`. 
+"""
 function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false, force::Bool=false)
     file = joinpath(rf.dir, rf.file)
 
     if isfile(file) && !force
-        created = createtime(file)
-        dtnow = now()
-        if !needsupdate(created, dtnow, rf.updates)
+        if !needsupdate(rf)
             !quiet && info("File '$(rf.file)' is up-to-date.")
             return
         end
