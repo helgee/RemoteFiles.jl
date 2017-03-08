@@ -1,8 +1,16 @@
 # RemoteFiles
 
-*Keep Your Non-Julia Files Up-To-Date.*
+*Download files from the Internet and keep them up-to-date.*
 
 [![Build Status][travis-badge]][travis-url] [![Build status][av-badge]][av-url] [![Coverage Status][coveralls-badge]][coveralls-url] [![codecov.io][codecov-badge]][codecov-url]
+
+## Installation
+
+The package can be installed through Julia's package manager:
+
+```julia
+Pkg.add("RemoteFiles")
+```
 
 [travis-badge]: https://travis-ci.org/helgee/RemoteFiles.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/helgee/RemoteFiles.jl
