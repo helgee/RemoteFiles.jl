@@ -97,15 +97,15 @@ isfile(rfs::RemoteFileSet) = all(isfile.(files(rfs)))
 rm(rfs::RemoteFileSet, file; force=false) = rm(rfs[file], force=force)
 rm(rfs::RemoteFileSet; force=false) = foreach(x->rm(x, force=force), files(rfs))
 path(rfs::RemoteFileSet, file) = path(rfs[file])
-paths(rfs::RemoteFileSet) = map(path, files(rfs))
+paths(rfs::RemoteFileSet, files...) = map(x->path(rfs[x]), files)
 
 include("updates.jl")
 include("download.jl")
 
-function download(rfs::RemoteFileSet; quiet::Bool=true, verbose::Bool=false, force::Bool=false)
+function download(rfs::RemoteFileSet; quiet::Bool=false, verbose::Bool=false, force::Bool=false)
     info("Downloading file set '$(rfs.name)'.")
     @sync for file in values(rfs.files)
-        @async download(file, quiet=quiet, verbose=verbose, force=force)
+        @async download(file, quiet=verbose, verbose=verbose, force=force)
     end
 end
 
