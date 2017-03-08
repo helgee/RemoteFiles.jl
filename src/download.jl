@@ -1,6 +1,8 @@
 import Base: download
 import Base.Dates: unix2datetime, now
 
+export lastupdate
+
 if is_windows()
     function download(url::AbstractString, filename::AbstractString, verbose::Bool)
         res = ccall((:URLDownloadToFileW,:urlmon),stdcall,Cuint,
@@ -63,7 +65,7 @@ function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false, force:
     if success
         update = true
         if isfile(file) && !force
-            if samecontent(tempfile, file) && !rf.update_unchanged
+            if samecontent(tempfile, file)
                 update = false
                 !quiet && info("File '$(rf.file)' has not changed. Update skipped.")
             else
@@ -84,7 +86,7 @@ function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false, force:
     rm(tempfile, force=true)
 end
 
-createtime(file) = unix2datetime(stat(file).ctime)
+lastupdate(rf::RemoteFile) = unix2datetime(stat(path(rf)).mtime)
 
 function samecontent(file1, file2)
     h1 = hash(open(read, file1, "r"))

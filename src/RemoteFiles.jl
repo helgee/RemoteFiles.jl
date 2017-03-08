@@ -25,7 +25,6 @@ function RemoteFile(uri::URI;
     retries::Int=3,
     wait::Int=5,
     failed::Symbol=:error,
-    update_unchanged::Bool=true,
 )
     if isempty(file)
         file = filename(uri)

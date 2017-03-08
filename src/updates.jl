@@ -1,5 +1,7 @@
 import Base.Dates: year, toprev, firstdayofmonth
 
+export needsupdate
+
 const upfun = Dict(
     :never => (created, now) -> false,
     :always => (created, now) -> true,
@@ -33,4 +35,4 @@ function needsupdate(created, now, updates)
     upfun[updates](created, now)
 end
 
-needsupdate(rf::RemoteFile) = needsupdate(createtime(path(rf)), now(), rf.updates)
+needsupdate(rf::RemoteFile) = needsupdate(lastupdate(rf), now(), rf.updates)

@@ -49,21 +49,21 @@ end
 
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:never)
     download(r)
-    c1 = RemoteFiles.createtime(r.file)
+    c1 = lastupdate(r)
     output = capture_stderr() do
         download(r, verbose=true)
     end
     @test contains(output, "up-to-date")
-    c2 = RemoteFiles.createtime(r.file)
+    c2 = lastupdate(r)
     @test c1 == c2
     rm(r, force=true)
 
     r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
     download(r)
-    c1 = RemoteFiles.createtime(r.file)
+    c1 = lastupdate(r)
     sleep(1)
     download(r)
-    c2 = RemoteFiles.createtime(r.file)
+    c2 = lastupdate(r)
     @test c1 != c2
     rm(r, force=true)
 
@@ -83,10 +83,10 @@ end
         updates=:always, update_unchanged=false)
     download(r)
     @test RemoteFiles.samecontent("image.png", "image.png") == true
-    c1 = RemoteFiles.createtime(r.file)
+    c1 = lastupdate(r)
     sleep(1)
     download(r)
-    c2 = RemoteFiles.createtime(r.file)
+    c2 = lastupdate(r)
     @test c1 == c2
     rm(r, force=true)
 
