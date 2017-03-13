@@ -12,6 +12,22 @@ The package can be installed through Julia's package manager:
 Pkg.add("RemoteFiles")
 ```
 
+## Usage
+
+```julia
+using RemoteFiles
+
+rf = RemoteFile(
+    "https://status.julialang.org/download/win64", # The URL of the remote file
+    file="julia-nightly-x64.exe",                  # The local file name
+    dir=".",                                       # The download directory
+    updates=:daily,                                # The update period of the file
+    retries=3,                                     # Retry three times if the download fails
+    wait=5,                                        # Wait five seconds between retries
+    failed=:error,                                 # Throw an exception if the download fails
+)
+```
+
 [travis-badge]: https://travis-ci.org/helgee/RemoteFiles.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/helgee/RemoteFiles.jl
 [av-badge]: https://ci.appveyor.com/api/projects/status/nr2fv8tngcru03k0?svg=true

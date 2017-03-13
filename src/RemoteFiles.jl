@@ -1,5 +1,7 @@
 module RemoteFiles
 
+__precompile__()
+
 using URIParser
 
 import Base: rm, isfile, getindex, download, rm
