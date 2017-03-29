@@ -80,7 +80,7 @@ end
         @test contains(output, "Local file was not updated.")
         rm(r, force=true)
 
-        r = @RemoteFile "https://httpbin.org/image/png" file="image.png"
+        @RemoteFile r "https://httpbin.org/image/png" file="image.png"
         download(r)
         @test isfile(r)
         rm(r, force=true)
@@ -100,7 +100,7 @@ end
         @test isfile(set)
         rm(set)
 
-        set = @RemoteFileSet "Images" begin
+        @RemoteFileSet set "Images" begin
             file1 = @RemoteFile "https://httpbin.org/image/png" file="image1.png"
             file2 = @RemoteFile "https://httpbin.org/image/png" file="image2.png"
         end

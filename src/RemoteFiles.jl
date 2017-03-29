@@ -52,6 +52,17 @@ macro RemoteFile(uri, args...)
     return :(RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
 end
 
+macro RemoteFile(var::Symbol, uri, args...)
+    dir = :(abspath(isa(@__FILE__, Void) ? "." : dirname(@__FILE__), "..", "data"))
+    kw = Expr[]
+    for arg in args
+        if isa(arg, Expr) && arg.head in (:(=), :kw)
+            push!(kw, Expr(:kw, arg.args...))
+        end
+    end
+    return :($(esc(var)) = RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
+end
+
 path(rf::RemoteFile) = joinpath(rf.dir, rf.file)
 rm(rf::RemoteFile; force=false) = rm(path(rf), force=force)
 isfile(rf::RemoteFile) = isfile(path(rf))
@@ -71,7 +82,7 @@ function RemoteFileSet(name; kwargs...)
     RemoteFileSet(name, files)
 end
 
-macro RemoteFileSet(name::String, ex)
+macro RemoteFileSet(var, name::String, ex)
     if !isa(ex, Expr) && ex.head == :block
         error("@RemoteFileSet must be used on a code block.")
     end
@@ -80,13 +91,12 @@ macro RemoteFileSet(name::String, ex)
         if isa(arg, Expr) && arg.head in (:(=), :kw)
             lhs = arg.args[1]
             rhs = arg.args[2]
-            if (isa(rhs, Expr) && rhs.head == :macrocall
-                && rhs.args[1] == Symbol(:@RemoteFile))
+            if (isa(rhs, Expr) && rhs.head == :macrocall && rhs.args[1] == Symbol(:@RemoteFile))
                 push!(kw, Expr(:kw, lhs, Expr(:escape, rhs)))
             end
         end
     end
-    return :(RemoteFileSet($name, $(kw...)))
+    return :($(esc(var)) = RemoteFileSet($name, $(kw...)))
 end
 
 files(rfs::RemoteFileSet) = collect(values(rfs.files))
