@@ -29,10 +29,11 @@ function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false, force:
 
     if isfile(file) && !force
         if !needsupdate(rf)
-            !quiet && info("File '$(rf.file)' is up-to-date.")
+            verbose && info("File '$(rf.file)' is up-to-date.")
             return
         end
     end
+
     tempfile = tempname()
 
     if !isdir(rf.dir)
@@ -65,12 +66,12 @@ function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false, force:
         if isfile(file) && !force
             if samecontent(tempfile, file)
                 update = false
-                !quiet && info("File '$(rf.file)' has not changed. Update skipped.")
+                verbose && info("File '$(rf.file)' has not changed. Update skipped.")
             else
-                !quiet && info("File '$(rf.file)' was successfully updated.")
+                verbose && info("File '$(rf.file)' was successfully updated.")
             end
         else
-            !quiet && info("File '$(rf.file)' was successfully downloaded.")
+            verbose && info("File '$(rf.file)' was successfully downloaded.")
         end
         update && mv(tempfile, file, remove_destination=true)
     else

@@ -103,7 +103,7 @@ include("updates.jl")
 include("download.jl")
 
 function download(rfs::RemoteFileSet; quiet::Bool=false, verbose::Bool=false, force::Bool=false)
-    info("Downloading file set '$(rfs.name)'.")
+    verbose && info("Downloading file set '$(rfs.name)'.")
     @sync for file in values(rfs.files)
         @async download(file, quiet=verbose, verbose=verbose, force=force)
     end
