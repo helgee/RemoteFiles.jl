@@ -14,18 +14,36 @@ Pkg.add("RemoteFiles")
 
 ## Usage
 
+Remote files are declared through the `@RemoteFile` macro:
+
 ```julia
 using RemoteFiles
 
-rf = RemoteFile(
-    "https://status.julialang.org/download/win64", # The URL of the remote file
-    file="julia-nightly-x64.exe",                  # The local file name
-    dir=".",                                       # The download directory
-    updates=:daily,                                # The update period of the file
-    retries=3,                                     # Retry three times if the download fails
-    wait=5,                                        # Wait five seconds between retries
-    failed=:error,                                 # Throw an exception if the download fails
-)
+@RemoteFile(JULIA_BINARY, "https://status.julialang.org/download/win64",
+    file="julia-nightly-x64.exe", updates=:daily)
+```
+
+The macro accepts the following optional keyword arguments:
+
+* `file`: Set a different local file name.
+* `dir`: The download directory. If `dir` is not set RemoteFiles will create a new directory
+`data` under the root of the current package and save the file there.
+* `updates` (default: `:never`): Indicates with which frequency the
+remote file is updated. Possible values are:
+    * `:never`
+    * `:daily`
+    * `:monthly`
+    * `:yearly`
+    * `:mondays` or `:weekly`, `:tuesdays` ...
+* `retries` (default: 3): How many retries should be attempted.
+* `wait` (default: 5): How many seconds to wait between retries.
+* `failed` (default: `:error`): What to do if the download fails. Either throw
+an exception (`:error`) or display a warning (`:warn`).
+
+```julia
+# Check whether the file has been downloaded
+isfile(JULIA_BINARY)
+download(JULIA_BINARY)
 ```
 
 [travis-badge]: https://travis-ci.org/helgee/RemoteFiles.jl.svg?branch=master
