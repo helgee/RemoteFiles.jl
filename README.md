@@ -34,7 +34,7 @@ remote file is updated. Possible values are:
     * `:daily`
     * `:monthly`
     * `:yearly`
-    * `:mondays` or `:weekly`, `:tuesdays` ...
+    * `:mondays`/`:weekly`, `:tuesdays`, etc.
 * `retries` (default: 3): How many retries should be attempted.
 * `wait` (default: 5): How many seconds to wait between retries.
 * `failed` (default: `:error`): What to do if the download fails. Either throw
@@ -43,7 +43,22 @@ an exception (`:error`) or display a warning (`:warn`).
 ```julia
 # Check whether the file has been downloaded
 isfile(JULIA_BINARY)
-download(JULIA_BINARY)
+download(JULIA_BINARY, quiet=true, verbose=false, force=false)
+rm(JULIA_BINARY, force=true)
+```
+
+```julia
+@RemoteFileSet BINARIES "Julia Binaries" begin
+    win = @RemoteFile "https://s3.amazonaws.com/julialang/bin/winnt/x64/0.5/julia-0.5.1-win64.exe"
+    osx = @RemoteFile "https://s3.amazonaws.com/julialang/bin/osx/x64/0.5/julia-0.5.1-osx10.7+.dmg"
+end
+```
+
+```julia
+download(BINARIES)
+isfile(BINARIES, :win)
+path(BINARIES, :win)
+rm(BINARIES, :win)
 ```
 
 [travis-badge]: https://travis-ci.org/helgee/RemoteFiles.jl.svg?branch=master
