@@ -2,15 +2,18 @@ import Base: download
 import Base.Dates: unix2datetime, now
 
 if is_windows()
-    function download(url::AbstractString, filename::AbstractString, verbose::Bool)
-        res = ccall((:URLDownloadToFileW,:urlmon),stdcall,Cuint,
-                    (Ptr{Void},Cwstring,Cwstring,Cuint,Ptr{Void}),C_NULL,url,filename,0,C_NULL)
+    function download(url::AbstractString, filename::AbstractString,
+        verbose::Bool)
+        res = ccall((:URLDownloadToFileW, :urlmon), stdcall, Cuint,
+                    (Ptr{Void}, Cwstring, Cwstring, Cuint, Ptr{Void}),
+                    C_NULL, url, filename, 0, C_NULL)
         if res != 0
             error("Download failed.")
         end
     end
 else
-    function download(url::AbstractString, filename::AbstractString, verbose::Bool)
+    function download(url::AbstractString, filename::AbstractString,
+        verbose::Bool)
         if verbose
             run(`curl -o $filename -L $url`)
         else
@@ -20,15 +23,21 @@ else
 end
 
 """
-    download(rf::RemoteFile; force::Bool=false, quiet::Bool=false, verbose::Bool=false)
+    download(rf::RemoteFile; quiet::Bool=false, verbose::Bool=false,
+        force::Bool=false)
 
-Download a `RemoteFile`. 
+Download `rf`.
+
+- `quiet`: Do not print messages.
+- `verbose`: Print all messages.
+- `force`: Force download and overwrite existing files.
 """
-function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false, force::Bool=false)
+function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false,
+    force::Bool=false)
     file = joinpath(rf.dir, rf.file)
 
     if isfile(file) && !force
-        if !needsupdate(rf)
+        if !isoutdated(rf)
             verbose && info("File '$(rf.file)' is up-to-date.")
             return
         end

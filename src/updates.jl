@@ -1,8 +1,9 @@
 import Base.Dates: year, toprev, firstdayofmonth
 
-export needsupdate, lastupdate
+export isoutdated, lastupdate
 
-daycomp(last, now, dow) = Date(toprev(now, dow, same=true)) > Date(toprev(last, dow, same=true))
+daycomp(last, now, dow) = Date(toprev(now, dow, same=true)) >
+    Date(toprev(last, dow, same=true))
 
 const upfun = Dict(
     :never => (last, now) -> false,
@@ -23,7 +24,7 @@ const upfun = Dict(
 
 lastupdate(rf::RemoteFile) = unix2datetime(stat(path(rf)).mtime)
 
-function needsupdate(last, now, updates)
+function isoutdated(last, now, updates)
     if !haskey(upfun, updates)
         error("Unknown update frequency specification: $updates.")
     end
@@ -31,4 +32,4 @@ function needsupdate(last, now, updates)
     upfun[updates](last, now)
 end
 
-needsupdate(rf::RemoteFile) = needsupdate(lastupdate(rf), now(), rf.updates)
+isoutdated(rf::RemoteFile) = isoutdated(lastupdate(rf), now(), rf.updates)

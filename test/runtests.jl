@@ -119,95 +119,94 @@ end
         updates = :helllottatimes
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test_throws ErrorException RemoteFiles.needsupdate(last, now, updates)
+        @test_throws ErrorException RemoteFiles.isoutdated(last, now, updates)
 
         updates = :mondays
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :tuesdays
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 7)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :wednesdays
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 2, 28)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :thursdays
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :fridays
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :saturdays
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :sundays
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 2)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :yearly
         last = DateTime(2017, 2, 28)
         now = DateTime(2018, 3, 5)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :monthly
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 2, 20)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :weekly
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 6)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :daily
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
-        @test RemoteFiles.needsupdate(last, now, updates) == true
+        @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 2, 28)
-        @test RemoteFiles.needsupdate(last, now, updates) == false
+        @test RemoteFiles.isoutdated(last, now, updates) == false
     end
 end
-
