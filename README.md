@@ -46,7 +46,8 @@ isfile(JULIA_BINARY)
 download(JULIA_BINARY, quiet=true, verbose=false, force=false)
 rm(JULIA_BINARY, force=true)
 ```
-
+`RemoteFile`s can be grouped together in a `RemoteFileSet`.
+The code below will create a `RemoteFileSet` under the variable `BINARIES`:
 ```julia
 @RemoteFileSet BINARIES "Julia Binaries" begin
     win = @RemoteFile "https://s3.amazonaws.com/julialang/bin/winnt/x64/0.5/julia-0.5.1-win64.exe"
