@@ -144,7 +144,7 @@ macro RemoteFileSet(name, description::String, ex)
             lhs = arg.args[1]
             rhs = arg.args[2]
             if (isa(rhs, Expr) && rhs.head == :macrocall && rhs.args[1] ==
-                Symbol(:@RemoteFile))
+                Symbol("@RemoteFile"))
                 push!(kw, Expr(:kw, lhs, Expr(:escape, rhs)))
             end
         end
