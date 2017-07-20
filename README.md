@@ -40,23 +40,39 @@ remote file is updated. Possible values are:
 * `failed` (default: `:error`): What to do if the download fails. Either throw
 an exception (`:error`) or display a warning (`:warn`).
 
-```julia
-# Check whether the file has been downloaded
-isfile(JULIA_BINARY)
-download(JULIA_BINARY, quiet=true, verbose=false, force=false)
-rm(JULIA_BINARY, force=true)
-```
+The following functions work on a `RemoteFile`:
+
+* `isfile(REMOTE_FILE)`: Check whether the file has been downloaded.
+    ```julia
+    julia> isfile(JULIA_BINARY)
+    false
+    ```
+* `download(REMOTE_FILE, quiet=true, verbose=false, force=false)`: Download the file.
+    * `quiet`: Do not print messages.
+    * `verbose`: Print all messages.
+    * `force`: 
+    ```julia
+    julia> download(JULIA_BINARY)
+    INFO: Downloading file 'julia-nightly-x64.exe' from 'https://status.julialang.org/download/win64'.
+    julia> isfile(JULIA_BINARY)
+    true
+    ```
+    ```julia
+    rm(JULIA_BINARY, force=true)
+    ```
 `RemoteFile`s can be grouped together in a `RemoteFileSet`.
 The code below will create a `RemoteFileSet` under the variable `BINARIES`:
 ```julia
 @RemoteFileSet BINARIES "Julia Binaries" begin
-    win = @RemoteFile "https://s3.amazonaws.com/julialang/bin/winnt/x64/0.5/julia-0.5.1-win64.exe"
-    osx = @RemoteFile "https://s3.amazonaws.com/julialang/bin/osx/x64/0.5/julia-0.5.1-osx10.7+.dmg"
+    win = @RemoteFile "https://julialang-s3.julialang.org/bin/winnt/x64/0.6/julia-0.6.0-win64.exe"
+    osx = @RemoteFile "https://julialang-s3.julialang.org/bin/osx/x64/0.6/julia-0.6.0-osx10.7+.dmg"
 end
 ```
 
 ```julia
 download(BINARIES)
+files(BINARIES)
+file(BINARIES, :win)
 isfile(BINARIES, :win)
 path(BINARIES, :win)
 rm(BINARIES, :win)

@@ -9,7 +9,7 @@ import Base: rm, isfile, getindex, download, rm
 export RemoteFile, @RemoteFile, path, rm, isfile, RemoteFileSet, @RemoteFileSet,
     files, paths
 
-type RemoteFile
+struct RemoteFile
     uri::URI
     file::String
     dir::String
@@ -109,7 +109,7 @@ Check whether `rf` has been downloaded.
 """
 isfile(rf::RemoteFile) = isfile(path(rf))
 
-immutable RemoteFileSet
+struct RemoteFileSet
     name::String
     files::Dict{Symbol,RemoteFile}
 end
