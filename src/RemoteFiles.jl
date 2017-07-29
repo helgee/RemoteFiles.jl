@@ -7,7 +7,7 @@ using URIParser
 import Base: rm, isfile, getindex, download, rm
 
 export RemoteFile, @RemoteFile, path, rm, isfile, RemoteFileSet, @RemoteFileSet,
-    files, paths
+    files, paths, download
 
 struct RemoteFile
     uri::URI
