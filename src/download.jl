@@ -2,7 +2,7 @@ import Base: download
 import Base.Dates: unix2datetime, now
 
 if is_windows()
-    function download(url::AbstractString, filename::AbstractString,
+    function _download(url::AbstractString, filename::AbstractString,
         verbose::Bool)
         res = ccall((:URLDownloadToFileW, :urlmon), stdcall, Cuint,
                     (Ptr{Void}, Cwstring, Cwstring, Cuint, Ptr{Void}),
@@ -12,7 +12,7 @@ if is_windows()
         end
     end
 else
-    function download(url::AbstractString, filename::AbstractString,
+    function _download(url::AbstractString, filename::AbstractString,
         verbose::Bool)
         if verbose
             run(`curl -o $filename -L $url`)
@@ -55,7 +55,7 @@ function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false,
     while tries < rf.retries
         tries += 1
         try
-            download(string(rf.uri), tempfile, verbose)
+            _download(string(rf.uri), tempfile, verbose)
             success = true
         catch err
             if isa(err, ErrorException)
