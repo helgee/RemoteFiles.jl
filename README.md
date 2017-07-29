@@ -49,7 +49,7 @@ download(BINARIES)
 
 ## Documentation
 
-Read the [documentation][docs-url-latest].
+Read the [documentation][docs-url-stable].
 
 [travis-badge]: https://travis-ci.org/helgee/RemoteFiles.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/helgee/RemoteFiles.jl
