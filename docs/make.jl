@@ -11,6 +11,7 @@ makedocs(
 )
 
 deploydocs(
+    julia = "nightly",
     repo = "github.com/helgee/RemoteFiles.jl.git",
     target = "build",
     deps = nothing,
