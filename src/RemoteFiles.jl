@@ -47,9 +47,10 @@ macro RemoteFile(uri, args...)
     kw = Expr[]
     for arg in args
         if isa(arg, Expr) && arg.head in (:(=), :kw)
-            push!(kw, Expr(:kw, arg.args...))
+            push!(kw, Expr(:kw, arg.args[1], Expr(:escape, arg.args[end])))
         end
     end
+    ex = :(RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
     return :(RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
 end
 
@@ -81,7 +82,7 @@ macro RemoteFile(name::Symbol, uri, args...)
     kw = Expr[]
     for arg in args
         if isa(arg, Expr) && arg.head in (:(=), :kw)
-            push!(kw, Expr(:kw, arg.args...))
+            push!(kw, Expr(:kw, arg.args[1], Expr(:escape, arg.args[end])))
         end
     end
     return :(const $(esc(name)) =

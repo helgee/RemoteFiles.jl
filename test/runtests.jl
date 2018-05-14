@@ -84,6 +84,16 @@ end
         download(r)
         @test isfile(r)
         rm(r, force=true)
+
+        dir = "data"
+        @RemoteFile r "https://httpbin.org/image/png" file="image.png" dir=dir
+        r1 = @RemoteFile "https://httpbin.org/image/png" file="image.png" dir=dir
+        download(r)
+        download(r1)
+        @test isdir(dir)
+        @test isfile(r)
+        @test isfile(r1)
+        rm(dir, force=true, recursive=true)
     end
 
     @testset "RemoteFileSets" begin
@@ -111,6 +121,14 @@ end
         @test isfile(set)
         rm(set, :file1, force=true)
         rm(set, :file2, force=true)
+
+        dir = "data"
+        @RemoteFileSet set "Images" begin
+            file1 = @RemoteFile "https://httpbin.org/image/png" file="image1.png" dir=dir
+        end
+        download(set)
+        @test isdir(dir)
+        rm(dir, force=true, recursive=true)
     end
 
     @testset "Updates" begin
