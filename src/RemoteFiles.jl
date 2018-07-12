@@ -45,13 +45,19 @@ macro RemoteFile(uri, args...)
     dir = :(abspath(isa(@__FILE__, Void) ? "." :
         dirname(@__FILE__), "..", "data"))
     kw = Expr[]
+    found_dir = false
     for arg in args
         if isa(arg, Expr) && arg.head in (:(=), :kw)
             push!(kw, Expr(:kw, arg.args[1], Expr(:escape, arg.args[end])))
+            if arg.args[1] == :dir
+                found_dir = true
+            end
         end
     end
-    ex = :(RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
-    return :(RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
+    if !found_dir
+        push!(kw, Expr(:kw, :dir, Expr(:escape, dir)))
+    end
+    :(RemoteFile($(esc(uri)); $(kw...)))
 end
 
 """
@@ -80,13 +86,19 @@ macro RemoteFile(name::Symbol, uri, args...)
     dir = :(abspath(isa(@__FILE__, Void) ? "." :
         dirname(@__FILE__), "..", "data"))
     kw = Expr[]
+    found_dir = false
     for arg in args
         if isa(arg, Expr) && arg.head in (:(=), :kw)
             push!(kw, Expr(:kw, arg.args[1], Expr(:escape, arg.args[end])))
+            if arg.args[1] == :dir
+                found_dir = true
+            end
         end
     end
-    return :(const $(esc(name)) =
-        RemoteFile($(esc(uri)); dir=$(esc(dir)), $(kw...)))
+    if !found_dir
+        push!(kw, Expr(:kw, :dir, Expr(:escape, dir)))
+    end
+    :(const $(esc(name)) = RemoteFile($(esc(uri)); $(kw...)))
 end
 
 """

@@ -1,4 +1,4 @@
-import Base.Dates: year, toprev, firstdayofmonth
+import Dates: year, toprev, firstdayofmonth, Date
 
 export isoutdated, lastupdate
 
