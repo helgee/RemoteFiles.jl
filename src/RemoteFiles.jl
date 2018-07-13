@@ -1,8 +1,8 @@
-module RemoteFiles
-
 __precompile__()
 
-using URIParser
+module RemoteFiles
+
+using HTTP: URI
 
 import Base: rm, isfile, getindex, download, rm
 
@@ -27,6 +27,8 @@ function RemoteFile(uri::URI;
     wait::Int=5,
     failed::Symbol=:error,
 )
+    isempty(uri.scheme) && throw(ArgumentError("File URI '$uri' does not seem to be valid."))
+
     if isempty(file)
         file = filename(uri)
         if isempty(file)
@@ -42,7 +44,7 @@ RemoteFile(uri::String; kwargs...) = RemoteFile(URI(uri); kwargs...)
 filename(uri::URI) = split(split(uri.path, ';')[1], '/')[end]
 
 macro RemoteFile(uri, args...)
-    dir = :(abspath(isa(@__FILE__, Void) ? "." :
+    dir = :(abspath(isa(@__FILE__, Nothing) ? "." :
         dirname(@__FILE__), "..", "data"))
     kw = Expr[]
     found_dir = false
@@ -83,7 +85,7 @@ The following keyword arguments are available:
     an exception (`:error`) or display a warning (`:warn`).
 """
 macro RemoteFile(name::Symbol, uri, args...)
-    dir = :(abspath(isa(@__FILE__, Void) ? "." :
+    dir = :(abspath(isa(@__FILE__, Nothing) ? "." :
         dirname(@__FILE__), "..", "data"))
     kw = Expr[]
     found_dir = false
@@ -98,7 +100,7 @@ macro RemoteFile(name::Symbol, uri, args...)
     if !found_dir
         push!(kw, Expr(:kw, :dir, Expr(:escape, dir)))
     end
-    :(const $(esc(name)) = RemoteFile($(esc(uri)); $(kw...)))
+    :($(esc(name)) = RemoteFile($(esc(uri)); $(kw...)))
 end
 
 """
@@ -162,7 +164,7 @@ macro RemoteFileSet(name, description::String, ex)
             end
         end
     end
-    return :(const $(esc(name)) = RemoteFileSet($description, $(kw...)))
+    return :($(esc(name)) = RemoteFileSet($description, $(kw...)))
 end
 
 """
@@ -236,7 +238,7 @@ Download all files contained in `rfs`.
 - `force`: Force download and overwrite existing files.
 """
 function download(rfs::RemoteFileSet; quiet::Bool=false, verbose::Bool=false, force::Bool=false)
-    verbose && info("Downloading file set '$(rfs.name)'.")
+    verbose && @info "Downloading file set '$(rfs.name)'."
     @sync for file in values(rfs.files)
         @async download(file, quiet=verbose, verbose=verbose, force=force)
     end

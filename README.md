@@ -38,8 +38,8 @@ This can be customized with the `dir` keyword argument to the `@RemoteFile` macr
 `RemoteFile`s can be grouped together in a `RemoteFileSet`:
 ```julia
 @RemoteFileSet BINARIES "Julia Binaries" begin
-    win = @RemoteFile "https://julialang-s3.julialang.org/bin/winnt/x64/0.6/julia-0.6.0-win64.exe"
-    osx = @RemoteFile "https://julialang-s3.julialang.org/bin/osx/x64/0.6/julia-0.6.0-osx10.7+.dmg"
+    win = @RemoteFile "https://julialang-s3.julialang.org/bin/winnt/x64/0.7/julia-0.7.0-win64.exe"
+    osx = @RemoteFile "https://julialang-s3.julialang.org/bin/osx/x64/0.7/julia-0.7.0-osx10.7+.dmg"
 end
 
 # Download all of them
