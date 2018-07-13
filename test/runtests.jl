@@ -5,21 +5,6 @@ using Test
 rm("image.png", force=true)
 rm("tmp", force=true, recursive=true)
 
-function capture_stderr(f::Function)
-    let fname = tempname()
-        try
-            open(fname, "w") do fout
-                redirect_stderr(fout) do
-                    f()
-                end
-            end
-            return read(fname, String)
-        finally
-            rm(fname, force=true)
-        end
-    end
-end
-
 @testset "RemoteFiles" begin
     @testset "RemoteFile" begin
         r = RemoteFile("https://httpbin.org/image/png")
@@ -28,11 +13,9 @@ end
         @test r.file == "image.png"
 
 
-        output = capture_stderr() do
-            download(r, verbose=true)
-        end
-        #= @test occursin("Downloading", output) =#
-        #= @test occursin("successfully downloaded", output) =#
+		@test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+			(:info, r"File 'image.png' was successfully downloaded."),
+			match_mode=:any, download(r, verbose=true))
         @test isfile(r)
         rm(r, force=true)
 
@@ -52,10 +35,7 @@ end
         r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:never)
         download(r)
         c1 = lastupdate(r)
-        output = capture_stderr() do
-            download(r, verbose=true)
-        end
-        #= @test occursin("up-to-date", output) =#
+		@test_logs (:info, r"File 'image.png' is up-to-date.") download(r, verbose=true)
         c2 = lastupdate(r)
         @test c1 == c2
         rm(r, force=true)
@@ -73,12 +53,8 @@ end
         download(r)
         r = RemoteFile("https://garbage/garbage/garbage.garbage", file="image.png",
             wait=1, retries=1, failed=:warn, updates=:always)
-        output = capture_stderr() do
-            download(r, verbose=true)
-        end
-        #= @test occursin("failed", output) =#
-        #= @test occursin("Retrying", output) =#
-        #= @test occursin("Local file was not updated.", output) =#
+		@test_logs((:warn, r"Download of 'https://garbage/garbage/garbage.garbage' failed after 1 retries. Local file was not updated."),
+			match_mode=:any, download(r, verbose=true))
         rm(r, force=true)
 
         @RemoteFile r "https://httpbin.org/image/png" file="image.png"
