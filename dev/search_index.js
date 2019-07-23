@@ -1,7 +1,7 @@
 var documenterSearchIndex = {"docs": [
 
 {
-    "location": "index.html#",
+    "location": "#",
     "page": "Home",
     "title": "Home",
     "category": "page",
@@ -9,7 +9,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#RemoteFiles-1",
+    "location": "#RemoteFiles-1",
     "page": "Home",
     "title": "RemoteFiles",
     "category": "section",
@@ -17,7 +17,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Installation-1",
+    "location": "#Installation-1",
     "page": "Home",
     "title": "Installation",
     "category": "section",
@@ -25,7 +25,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Quickstart-1",
+    "location": "#Quickstart-1",
     "page": "Home",
     "title": "Quickstart",
     "category": "section",
@@ -33,7 +33,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Documentation-1",
+    "location": "#Documentation-1",
     "page": "Home",
     "title": "Documentation",
     "category": "section",
@@ -41,7 +41,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#",
+    "location": "api/#",
     "page": "API",
     "title": "API",
     "category": "page",
@@ -49,7 +49,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#Base.Filesystem.isfile-Tuple{RemoteFileSet,Any}",
+    "location": "api/#Base.Filesystem.isfile-Tuple{RemoteFileSet,Any}",
     "page": "API",
     "title": "Base.Filesystem.isfile",
     "category": "method",
@@ -57,15 +57,15 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#Base.Filesystem.isfile-Tuple{RemoteFileSet}",
+    "location": "api/#Base.Filesystem.isfile-Tuple{RemoteFileSet}",
     "page": "API",
     "title": "Base.Filesystem.isfile",
     "category": "method",
-    "text": "isfile(rfs::RemoteFileSet, file)\n\nCheck whether all files contained in rfs have been downloaded.\n\n\n\n\n\n"
+    "text": "isfile(rfs::RemoteFileSet)\n\nCheck whether all files contained in rfs have been downloaded.\n\n\n\n\n\n"
 },
 
 {
-    "location": "api.html#Base.Filesystem.isfile-Tuple{RemoteFile}",
+    "location": "api/#Base.Filesystem.isfile-Tuple{RemoteFile}",
     "page": "API",
     "title": "Base.Filesystem.isfile",
     "category": "method",
@@ -73,7 +73,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#Base.Filesystem.rm-Tuple{RemoteFileSet,Any}",
+    "location": "api/#Base.Filesystem.rm-Tuple{RemoteFileSet,Any}",
     "page": "API",
     "title": "Base.Filesystem.rm",
     "category": "method",
@@ -81,7 +81,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#Base.Filesystem.rm-Tuple{RemoteFileSet}",
+    "location": "api/#Base.Filesystem.rm-Tuple{RemoteFileSet}",
     "page": "API",
     "title": "Base.Filesystem.rm",
     "category": "method",
@@ -89,7 +89,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#Base.Filesystem.rm-Tuple{RemoteFile}",
+    "location": "api/#Base.Filesystem.rm-Tuple{RemoteFile}",
     "page": "API",
     "title": "Base.Filesystem.rm",
     "category": "method",
@@ -97,7 +97,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#Base.download-Tuple{RemoteFileSet}",
+    "location": "api/#Base.download-Tuple{RemoteFileSet}",
     "page": "API",
     "title": "Base.download",
     "category": "method",
@@ -105,7 +105,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#Base.download-Tuple{RemoteFile}",
+    "location": "api/#Base.download-Tuple{RemoteFile}",
     "page": "API",
     "title": "Base.download",
     "category": "method",
@@ -113,7 +113,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#RemoteFiles.files-Tuple{RemoteFileSet}",
+    "location": "api/#RemoteFiles.files-Tuple{RemoteFileSet}",
     "page": "API",
     "title": "RemoteFiles.files",
     "category": "method",
@@ -121,7 +121,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#RemoteFiles.path-Tuple{RemoteFileSet,Any}",
+    "location": "api/#RemoteFiles.path-Tuple{RemoteFileSet,Any}",
     "page": "API",
     "title": "RemoteFiles.path",
     "category": "method",
@@ -129,7 +129,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#RemoteFiles.path-Tuple{RemoteFile}",
+    "location": "api/#RemoteFiles.path-Tuple{RemoteFile}",
     "page": "API",
     "title": "RemoteFiles.path",
     "category": "method",
@@ -137,7 +137,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#RemoteFiles.paths-Tuple{RemoteFileSet,Vararg{Any,N} where N}",
+    "location": "api/#RemoteFiles.paths-Tuple{RemoteFileSet,Vararg{Any,N} where N}",
     "page": "API",
     "title": "RemoteFiles.paths",
     "category": "method",
@@ -145,7 +145,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#RemoteFiles.@RemoteFile-Tuple{Symbol,Any,Vararg{Any,N} where N}",
+    "location": "api/#RemoteFiles.@RemoteFile-Tuple{Symbol,Any,Vararg{Any,N} where N}",
     "page": "API",
     "title": "RemoteFiles.@RemoteFile",
     "category": "macro",
@@ -153,7 +153,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#RemoteFiles.@RemoteFileSet-Tuple{Any,String,Any}",
+    "location": "api/#RemoteFiles.@RemoteFileSet-Tuple{Any,String,Any}",
     "page": "API",
     "title": "RemoteFiles.@RemoteFileSet",
     "category": "macro",
@@ -161,7 +161,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api.html#API-1",
+    "location": "api/#API-1",
     "page": "API",
     "title": "API",
     "category": "section",
