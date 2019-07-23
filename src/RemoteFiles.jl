@@ -190,7 +190,7 @@ Check whether a specific `file` contained in `rfs` has been downloaded.
 isfile(rfs::RemoteFileSet, file) = isfile(rfs[file])
 
 """
-    isfile(rfs::RemoteFileSet, file)
+    isfile(rfs::RemoteFileSet)
 
 Check whether all files contained in `rfs` have been downloaded.
 """

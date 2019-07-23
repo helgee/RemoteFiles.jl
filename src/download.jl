@@ -14,10 +14,20 @@ import Dates: unix2datetime, now
 else
     function _download(url::AbstractString, filename::AbstractString,
         verbose::Bool)
-        if verbose
-            run(`curl -o $filename -L $url`)
-        else
-            run(`curl -s -o $filename -L $url`)
+        try
+            if verbose
+                run(`curl -o $filename -L $url`)
+            else
+                run(`curl -s -o $filename -L $url`)
+            end
+        catch err
+            # handle julia 1.2 changing error type for failing processes
+            # https://github.com/JuliaLang/julia/pull/27900
+            if isdefined(Base, :ProcessFailedException) && err isa ProcessFailedException
+                error(sprint(showerror, err))
+            else
+                return err
+            end
         end
     end
 end
