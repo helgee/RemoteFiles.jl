@@ -26,7 +26,7 @@ else
             if isdefined(Base, :ProcessFailedException) && err isa ProcessFailedException
                 error(sprint(showerror, err))
             else
-                return err
+                rethrow(err)
             end
         end
     end
