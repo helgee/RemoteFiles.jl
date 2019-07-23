@@ -1,24 +1,28 @@
-# Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
 os:
   - linux
   - osx
 julia:
-  - 0.7
+  - 1.0
+  - 1.1
+  - 1.2
   - nightly
 matrix:
   allow_failures:
     - julia: nightly
 notifications:
   email: false
-# uncomment the following lines to override the default test script
-#script:
-#  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("RemoteFiles"); Pkg.test("RemoteFiles"; coverage=true)'
 after_success:
-  # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("RemoteFiles")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
-  # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("RemoteFiles")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
-  - julia -e 'ps=Pkg.PackageSpec(name="Documenter", version="0.19"); Pkg.add(ps); Pkg.pin(ps)'
-  - julia -e 'cd(Pkg.dir("RemoteFiles")); include(joinpath("docs", "make.jl"))'
+    # Push coverage results to Coveralls.
+    - julia -e 'import Pkg; cd(Pkg.dir("RemoteFiles")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+    # Push coverage results to Codecov.
+    - julia -e 'import Pkg; cd(Pkg.dir("RemoteFiles")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.build("RemoteFiles"); Pkg.instantiate()'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip
