@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "Base.download",
     "category": "method",
-    "text": "download(rf::RemoteFile; quiet::Bool=false, verbose::Bool=false,\n    force::Bool=false)\n\nDownload rf.\n\nquiet: Do not print messages.\nverbose: Print all messages.\nforce: Force download and overwrite existing files.\n\n\n\n\n\n"
+    "text": "download(rf::RemoteFile; quiet::Bool=false, verbose::Bool=false,\n    force::Bool=false)\n\nDownload rf.\n\nquiet: Do not print messages.\nverbose: Print all messages.\nforce: Force download and overwrite existing files.\nretries: Override the number of retries in rf\n\n\n\n\n\n"
 },
 
 {
