@@ -7,7 +7,7 @@ using HTTP: URI
 import Base: rm, isfile, getindex, download, rm
 
 export DownloadError, RemoteFile, @RemoteFile, path, rm, isfile,
-    RemoteFileSet, @RemoteFileSet, files, paths, download
+    RemoteFileSet, @RemoteFileSet, files, paths, download, load
 
 include("backends.jl")
 
@@ -264,6 +264,23 @@ function download(rfs::RemoteFileSet; quiet::Bool=false, verbose::Bool=false, fo
     @sync for file in values(rfs.files)
         @async download(file, quiet=verbose, verbose=verbose, force=force)
     end
+end
+
+import FileIO: load
+
+"""
+    load(rf::RemoteFile)
+
+Load the contents of a remote file, downloading the file if
+it has not been done previously, reading the file from disk
+and trying to infer the format from filename and/or magic
+bytes in the file via [FileIO.jl](https://github.com/JuliaIO/FileIO.jl).
+"""
+function load(rf::RemoteFile)
+    if !isfile(rf)
+        download(rf)
+    end
+    load(path(rf))
 end
 
 end # module

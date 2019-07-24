@@ -89,7 +89,6 @@ rm("tmp", force=true, recursive=true)
         @test isfile(r1)
         rm(dir, force=true, recursive=true)
     end
-
     @testset "RemoteFileSets" begin
         set = RemoteFileSet("Images",
             file1=RemoteFile("https://httpbin.org/image/png", file="image1.png"),
@@ -124,7 +123,6 @@ rm("tmp", force=true, recursive=true)
         @test isdir(dir)
         rm(dir, force=true, recursive=true)
     end
-
     @testset "Updates" begin
         @test RemoteFiles.samecontent(@__FILE__, @__FILE__) == true
 

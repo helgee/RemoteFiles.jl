@@ -12,8 +12,7 @@ HTTP = "≥ 0.6.12"
 julia = "≥ 0.7.0"
 
 [extras]
-Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Dates", "Test"]
+test = ["Test"]
