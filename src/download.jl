@@ -1,37 +1,6 @@
 import Base: download
 import Dates: unix2datetime, now
 
-@static if Sys.iswindows()
-    function _download(url::AbstractString, filename::AbstractString,
-        verbose::Bool)
-        res = ccall((:URLDownloadToFileW, :urlmon), stdcall, Cuint,
-                    (Ptr{Cvoid}, Cwstring, Cwstring, Cuint, Ptr{Cvoid}),
-                    C_NULL, url, filename, 0, C_NULL)
-        if res != 0
-            error("Download failed.")
-        end
-    end
-else
-    function _download(url::AbstractString, filename::AbstractString,
-        verbose::Bool)
-        try
-            if verbose
-                run(`curl -o $filename -L $url`)
-            else
-                run(`curl -s -o $filename -L $url`)
-            end
-        catch err
-            # handle julia 1.2 changing error type for failing processes
-            # https://github.com/JuliaLang/julia/pull/27900
-            if isdefined(Base, :ProcessFailedException) && err isa ProcessFailedException
-                error(sprint(showerror, err))
-            else
-                rethrow(err)
-            end
-        end
-    end
-end
-
 """
     download(rf::RemoteFile; quiet::Bool=false, verbose::Bool=false,
         force::Bool=false)
@@ -41,10 +10,29 @@ Download `rf`.
 - `quiet`: Do not print messages.
 - `verbose`: Print all messages.
 - `force`: Force download and overwrite existing files.
+- `retries`: Override the number of retries in `rf`
 """
-function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false,
-    force::Bool=false)
+function download(rf::RemoteFile; kwargs...)
+    for (i, backend) in enumerate(BACKENDS)
+        try
+            if i == 1
+                download(backend, rf; kwargs...)
+            else
+                download(backend, rf; retries=1, kwargs...)
+            end
+            return
+        catch err
+            err isa DownloadError && continue
+            rethrow(err)
+        end
+    end
+    throw(DownloadError("All available backends failed."))
+end
+
+function download(backend, rf::RemoteFile; verbose::Bool=false, quiet::Bool=false,
+    force::Bool=false, retries::Int=0)
     file = joinpath(rf.dir, rf.file)
+    retries = retries != 0 ? retries : rf.retries
 
     if isfile(file) && !force
         if !isoutdated(rf)
@@ -59,16 +47,16 @@ function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false,
         mkpath(rf.dir)
     end
 
-    !quiet && @info "Downloading file '$(rf.file)' from '$(rf.uri)'."
+    !quiet && @info "Downloading file '$(rf.file)' from '$(rf.uri)' with $(nameof(backend))."
     tries = 0
     success = false
-    while tries < rf.retries
+    while tries < retries
         tries += 1
         try
-            _download(string(rf.uri), tempfile, verbose)
+            download(backend, string(rf.uri), tempfile, verbose=verbose)
             success = true
         catch err
-            if isa(err, ErrorException)
+            if err isa DownloadError
                 if !quiet
                     @warn "Download failed with error: $(err.msg)"
                     @info "Retrying in $(rf.wait) seconds."
@@ -95,9 +83,9 @@ function download(rf::RemoteFile; verbose::Bool=false, quiet::Bool=false,
         update && mv(tempfile, file, force=true)
     else
         if rf.failed == :warn && isfile(file)
-            @warn "Download of '$(rf.uri)' failed after $(rf.retries) retries. Local file was not updated."
+            @warn "Download of '$(rf.uri)' failed after $(retries) retries. Local file was not updated."
         elseif rf.failed == :error || (rf.failed == :warn && !isfile(file))
-            error("Download of '$(rf.uri)' failed after $(rf.retries) retries.")
+            throw(DownloadError("Download of '$(rf.uri)' failed after $(retries) retries."))
         end
     end
     rm(tempfile, force=true)
@@ -108,3 +96,4 @@ function samecontent(file1, file2)
     h2 = hash(open(read, file2, "r"))
     h1 == h2
 end
+

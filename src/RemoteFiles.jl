@@ -6,8 +6,25 @@ using HTTP: URI
 
 import Base: rm, isfile, getindex, download, rm
 
-export RemoteFile, @RemoteFile, path, rm, isfile, RemoteFileSet, @RemoteFileSet,
-    files, paths, download
+export DownloadError, RemoteFile, @RemoteFile, path, rm, isfile,
+    RemoteFileSet, @RemoteFileSet, files, paths, download
+
+include("backends.jl")
+
+const BACKENDS = AbstractBackend[Http()]
+
+function __init__()
+    isnothing(Sys.which("wget")) || pushfirst!(BACKENDS, Wget())
+    if Sys.isunix() || (Sys.iswindows() && Int(Sys.windows_version().major) >= 10)
+        isnothing(Sys.which("curl")) || pushfirst!(BACKENDS, CURL())
+    end
+end
+
+struct DownloadError <: Exception
+    msg::String
+end
+
+Base.show(io::IO, ex::DownloadError) = print(io, ex.msg)
 
 struct RemoteFile
     uri::URI

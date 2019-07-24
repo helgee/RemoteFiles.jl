@@ -6,6 +6,19 @@ rm("image.png", force=true)
 rm("tmp", force=true, recursive=true)
 
 @testset "RemoteFiles" begin
+    @testset "Backends" begin
+        download(RemoteFiles.CURL(), "https://httpbin.org/image/png", "image.png")
+        @test isfile("image.png")
+        rm("image.png", force=true)
+
+        download(RemoteFiles.Wget(), "https://httpbin.org/image/png", "image.png")
+        @test isfile("image.png")
+        rm("image.png", force=true)
+
+        download(RemoteFiles.Http(), "https://httpbin.org/image/png", "image.png")
+        @test isfile("image.png")
+        rm("image.png", force=true)
+    end
     @testset "RemoteFile" begin
         r = RemoteFile("https://httpbin.org/image/png")
         @test r.file == "png"
@@ -27,10 +40,10 @@ rm("tmp", force=true, recursive=true)
         @test_throws ArgumentError RemoteFile("garbage")
 
         r = RemoteFile("https://garbage/garbage/garbage.garbage", wait=0, retries=0)
-        @test_throws ErrorException download(r)
+        @test_throws DownloadError download(r)
 
         r = RemoteFile("https://garbage/garbage/garbage.garbage", wait=0, retries=0, failed=:warn)
-        @test_throws ErrorException download(r)
+        @test_throws DownloadError download(r)
 
         r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:never)
         download(r)
