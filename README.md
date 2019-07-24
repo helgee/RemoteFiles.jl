@@ -2,7 +2,7 @@
 
 *Download files from the Internet and keep them up-to-date.*
 
-[![Build Status][travis-badge]][travis-url] [![Build status][av-badge]][av-url] [![Coverage Status][coveralls-badge]][coveralls-url] [![codecov.io][codecov-badge]][codecov-url] [![Docs Stable][docs-badge-stable]][docs-url-stable] [![Docs Latest][docs-badge-latest]][docs-url-latest]
+[![Build Status][travis-badge]][travis-url] [![Build status][av-badge]][av-url] [![Coverage Status][coveralls-badge]][coveralls-url] [![codecov.io][codecov-badge]][codecov-url] [![Docs Stable][docs-badge-stable]][docs-url-stable] [![Docs Latest][docs-badge-dev]][docs-url-dev]
 
 ## Installation
 
@@ -59,7 +59,7 @@ Read the [documentation][docs-url-stable].
 [coveralls-url]: https://coveralls.io/github/helgee/RemoteFiles.jl?branch=master
 [codecov-badge]: http://codecov.io/github/helgee/RemoteFiles.jl/coverage.svg?branch=master
 [codecov-url]: http://codecov.io/github/helgee/RemoteFiles.jl?branch=master
-[docs-badge-latest]: https://img.shields.io/badge/docs-latest-blue.svg
-[docs-url-latest]: https://helgee.github.io/RemoteFiles.jl/latest
+[docs-badge-dev]: https://img.shields.io/badge/docs-dev-blue.svg
+[docs-url-dev]: https://helgee.github.io/RemoteFiles.jl/dev/
 [docs-badge-stable]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-url-stable]: https://helgee.github.io/RemoteFiles.jl/stable
+[docs-url-stable]: https://helgee.github.io/RemoteFiles.jl/stable/
