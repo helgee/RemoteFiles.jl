@@ -113,6 +113,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "api/#FileIO.load-Tuple{RemoteFile}",
+    "page": "API",
+    "title": "FileIO.load",
+    "category": "method",
+    "text": "load(rf::RemoteFile)\n\nLoad the contents of a remote file, downloading the file if it has not been done previously, reading the file from disk and trying to infer the format from filename and/or magic bytes in the file via FileIO.jl.\n\n\n\n\n\n"
+},
+
+{
     "location": "api/#RemoteFiles.files-Tuple{RemoteFileSet}",
     "page": "API",
     "title": "RemoteFiles.files",
