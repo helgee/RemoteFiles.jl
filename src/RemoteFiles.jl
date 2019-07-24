@@ -19,6 +19,13 @@ struct RemoteFile
     failed::Symbol
 end
 
+function getdir(src)
+    file = string(src.file)
+    file = startswith(file, "REPL") ? "." : file
+    file = abspath(dirname(file), "..", "data")
+    :($file)
+end
+
 function RemoteFile(uri::URI;
     file::String="",
     dir::String=".",
@@ -44,8 +51,7 @@ RemoteFile(uri::String; kwargs...) = RemoteFile(URI(uri); kwargs...)
 filename(uri::URI) = split(split(uri.path, ';')[1], '/')[end]
 
 macro RemoteFile(uri, args...)
-    dir = :(abspath(isa(@__FILE__, Nothing) ? "." :
-        dirname(@__FILE__), "..", "data"))
+    dir = getdir(__source__)
     kw = Expr[]
     found_dir = false
     for arg in args
@@ -85,8 +91,7 @@ The following keyword arguments are available:
     an exception (`:error`) or display a warning (`:warn`).
 """
 macro RemoteFile(name::Symbol, uri, args...)
-    dir = :(abspath(isa(@__FILE__, Nothing) ? "." :
-        dirname(@__FILE__), "..", "data"))
+    dir = getdir(__source__)
     kw = Expr[]
     found_dir = false
     for arg in args
