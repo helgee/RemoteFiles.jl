@@ -7,13 +7,17 @@ rm("tmp", force=true, recursive=true)
 
 @testset "RemoteFiles" begin
     @testset "Backends" begin
-        download(RemoteFiles.CURL(), "https://httpbin.org/image/png", "image.png")
-        @test isfile("image.png")
-        rm("image.png", force=true)
+        if RemoteFiles.CURL() in RemoteFiles.BACKENDS
+            download(RemoteFiles.CURL(), "https://httpbin.org/image/png", "image.png")
+            @test isfile("image.png")
+            rm("image.png", force=true)
+        end
 
-        download(RemoteFiles.Wget(), "https://httpbin.org/image/png", "image.png")
-        @test isfile("image.png")
-        rm("image.png", force=true)
+        if RemoteFiles.Wget() in RemoteFiles.BACKENDS
+            download(RemoteFiles.Wget(), "https://httpbin.org/image/png", "image.png")
+            @test isfile("image.png")
+            rm("image.png", force=true)
+        end
 
         download(RemoteFiles.Http(), "https://httpbin.org/image/png", "image.png")
         @test isfile("image.png")

@@ -8,7 +8,7 @@ nameof(::CURL) = "cURL"
 
 function download(::CURL, url, filename; verbose::Bool=false)
     curl = Sys.which("curl")
-    isnothing(curl) && error("The `curl` executable was not found.")
+    curl === nothing && error("The `curl` executable was not found.")
     try
         if verbose
             run(`$curl -o $filename -L $url`)
@@ -30,7 +30,7 @@ nameof(::Wget) = "wget"
 
 function download(::Wget, url, filename; verbose::Bool=false)
     wget = Sys.which("wget")
-    isnothing(wget) && error("The `wget` executable was not found.")
+    wget === nothing && error("The `wget` executable was not found.")
     try
         if verbose
             run(`$wget -O $filename $url`)

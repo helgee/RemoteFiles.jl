@@ -14,9 +14,9 @@ include("backends.jl")
 const BACKENDS = AbstractBackend[Http()]
 
 function __init__()
-    isnothing(Sys.which("wget")) || pushfirst!(BACKENDS, Wget())
+    Sys.which("wget") !== nothing && pushfirst!(BACKENDS, Wget())
     if Sys.isunix() || (Sys.iswindows() && Int(Sys.windows_version().major) >= 10)
-        isnothing(Sys.which("curl")) || pushfirst!(BACKENDS, CURL())
+        Sys.which("curl") !== nothing && pushfirst!(BACKENDS, CURL())
     end
 end
 
