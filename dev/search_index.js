@@ -29,7 +29,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Quickstart",
     "category": "section",
-    "text": "Remote files are declared through the @RemoteFile macro:using RemoteFiles\n\n@RemoteFile(JULIA_BINARY, \"https://status.julialang.org/download/win64\",\n    file=\"julia-nightly-x64.exe\", updates=:daily)\n\n# Download the file if it is out-of-date\ndownload(JULIA_BINARY)\n\n# Check whether the file has been downloaded\nisfile(JULIA_BINARY)\n\n# Get the path\npath(JULIA_BINARY)By default the file is downloaded to Pkg.dir(CURRENT_PACKAGE)/data. This can be customized with the dir keyword argument to the @RemoteFile macro.RemoteFiles can be grouped together in a RemoteFileSet:@RemoteFileSet BINARIES \"Julia Binaries\" begin\n    win = @RemoteFile \"https://julialang-s3.julialang.org/bin/winnt/x64/0.6/julia-0.6.0-win64.exe\"\n    osx = @RemoteFile \"https://julialang-s3.julialang.org/bin/osx/x64/0.6/julia-0.6.0-osx10.7+.dmg\"\nend\n\n# Download all of them\n\ndownload(BINARIES)"
+    "text": "Remote files are declared through the @RemoteFile macro:using RemoteFiles\n\n@RemoteFile(JULIA_BINARY, \"https://status.julialang.org/download/win64\",\n    file=\"julia-nightly-x64.exe\", updates=:daily)\n\n# Download the file if it is out-of-date\ndownload(JULIA_BINARY)\n\n# Check whether the file has been downloaded\nisfile(JULIA_BINARY)\n\n# Get the path\npath(JULIA_BINARY)By default the file is downloaded to Pkg.dir(CURRENT_PACKAGE)/data. This can be customized with the dir keyword argument to the @RemoteFile macro.RemoteFiles can be grouped together in a RemoteFileSet:@RemoteFileSet BINARIES \"Julia Binaries\" begin\n    win = @RemoteFile \"https://julialang-s3.julialang.org/bin/winnt/x64/0.6/julia-0.6.0-win64.exe\"\n    osx = @RemoteFile \"https://julialang-s3.julialang.org/bin/osx/x64/0.6/julia-0.6.0-osx10.7+.dmg\"\nend\n\n# Download all of them\n\ndownload(BINARIES)RemoteFiles.jl will try to download files via the cURL command-line tool by default and automatically fall back to use wget or HTTP.jl if the download fails or the respective binaries are not available."
 },
 
 {
@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "Base.download",
     "category": "method",
-    "text": "download(rf::RemoteFile; quiet::Bool=false, verbose::Bool=false,\n    force::Bool=false)\n\nDownload rf.\n\nquiet: Do not print messages.\nverbose: Print all messages.\nforce: Force download and overwrite existing files.\nretries: Override the number of retries in rf\n\n\n\n\n\n"
+    "text": "download(rf::RemoteFile;\n         quiet::Bool=false,\n         verbose::Bool=false,\n         force::Bool=false,\n         retries::Int=0)\n\nDownload rf.\n\nquiet: Do not print messages.\nverbose: Print all messages.\nforce: Force download and overwrite existing files.\nretries: Override the number of retries in rf if retries != 0\n\n\n\n\n\n"
 },
 
 {
@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "RemoteFiles.@RemoteFile",
     "category": "macro",
-    "text": "@RemoteFile name url [key=value...]\n\nAssign the RemoteFile located at url to the variable name.\n\nThe following keyword arguments are available:\n\nfile: Set a different local file name.\ndir: The download directory. If dir is not set RemoteFiles will create   a new directory data under the root of the current package and save the   file there.\nupdates (default: :never): Indicates with which frequency the   remote file is updated. Possible values are:\n:never\n:daily\n:monthly\n:yearly\n:mondays/:weekly, :tuesdays, etc.\nretries (default: 3): How many retries should be attempted.\nwait (default: 5): How many seconds to wait between retries.\nfailed (default: :error): What to do if the download fails. Either throw   an exception (:error) or display a warning (:warn).\n\n\n\n\n\n"
+    "text": "@RemoteFile name url [key=value...]\n\nAssign the RemoteFile located at url to the variable name.\n\nThe following keyword arguments are available:\n\nfile: Set a different local file name.\ndir: The download directory. If dir is not set RemoteFiles will create   a new directory data under the root of the current package and save the   file there.\nupdates (default: :never): Indicates with which frequency the   remote file is updated. Possible values are:\n:never\n:daily\n:monthly\n:yearly\n:mondays/:weekly, :tuesdays, etc.\nretries (default: 3): How many retries should be attempted.\ntry_backends (default: true): Whether to retry with different backends.\nwait (default: 5): How many seconds to wait between retries.\nfailed (default: :error): What to do if the download fails. Either throw   an exception (:error) or display a warning (:warn).\n\n\n\n\n\n"
 },
 
 {
