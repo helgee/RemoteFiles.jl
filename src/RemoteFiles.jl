@@ -15,7 +15,11 @@ const BACKENDS = AbstractBackend[Http()]
 
 function __init__()
     Sys.which("wget") !== nothing && pushfirst!(BACKENDS, Wget())
-    if Sys.isunix() || (Sys.iswindows() && Int(Sys.windows_version().major) >= 10)
+    # Windows ships a proper cURL starting with 10.0.1803.
+    # Before that, there is an awful Powershell alias which we want to avoid.
+    if Sys.isunix() || (Sys.iswindows() &&
+                        Int(Sys.windows_version().major) >= 10 &&
+                        Int(Sys.windows_version().patch) >= 1803)
         Sys.which("curl") !== nothing && pushfirst!(BACKENDS, CURL())
     end
 end
