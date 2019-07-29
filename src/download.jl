@@ -2,15 +2,18 @@ import Base: download
 import Dates: unix2datetime, now
 
 """
-    download(rf::RemoteFile; quiet::Bool=false, verbose::Bool=false,
-        force::Bool=false)
+    download(rf::RemoteFile;
+             quiet::Bool=false,
+             verbose::Bool=false,
+             force::Bool=false,
+             retries::Int=0)
 
 Download `rf`.
 
 - `quiet`: Do not print messages.
 - `verbose`: Print all messages.
 - `force`: Force download and overwrite existing files.
-- `retries`: Override the number of retries in `rf`
+- `retries`: Override the number of retries in `rf` if `retries != 0`
 """
 function download(rf::RemoteFile; kwargs...)
     for (i, backend) in enumerate(BACKENDS)
@@ -22,7 +25,7 @@ function download(rf::RemoteFile; kwargs...)
             end
             return
         catch err
-            err isa DownloadError && continue
+            err isa DownloadError && rf.try_backends && continue
             rethrow(err)
         end
     end

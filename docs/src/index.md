@@ -45,6 +45,11 @@ end
 download(BINARIES)
 ```
 
+RemoteFiles.jl will try to download files via the [cURL](https://curl.haxx.se/) command-line tool
+by default and automatically fall back to use [wget](https://www.gnu.org/software/wget/) or
+[HTTP.jl](https://github.com/JuliaWeb/HTTP.jl) if the download fails or the respective binaries
+are not available.
+
 ## Documentation
 
 Continue to the [API](@ref) documentation.

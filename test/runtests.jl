@@ -46,6 +46,10 @@ rm("tmp", force=true, recursive=true)
         r = RemoteFile("https://garbage/garbage/garbage.garbage", wait=0, retries=0)
         @test_throws DownloadError download(r)
 
+        r = RemoteFile("https://garbage/garbage/garbage.garbage", wait=0, retries=1, try_backends=false)
+        @test_throws DownloadError download(r)
+
+        # Fail early for unexpected errors
         r = RemoteFile("https://garbage/garbage/garbage.garbage", wait=0, retries=0, failed=:warn)
         @test_throws DownloadError download(r)
 

@@ -32,6 +32,7 @@ struct RemoteFile
     dir::String
     updates::Symbol
     retries::Int
+    try_backends::Bool
     wait::Int
     failed::Symbol
 end
@@ -48,6 +49,7 @@ function RemoteFile(uri::URI;
     dir::String=".",
     updates::Symbol=:never,
     retries::Int=3,
+    try_backends::Bool=true,
     wait::Int=5,
     failed::Symbol=:error,
 )
@@ -61,7 +63,7 @@ function RemoteFile(uri::URI;
         end
     end
 
-    RemoteFile(uri, file, abspath(dir), updates, retries, wait, failed)
+    RemoteFile(uri, file, abspath(dir), updates, retries, try_backends, wait, failed)
 end
 RemoteFile(uri::String; kwargs...) = RemoteFile(URI(uri); kwargs...)
 
@@ -103,6 +105,7 @@ The following keyword arguments are available:
     - `:yearly`
     - `:mondays`/`:weekly`, `:tuesdays`, etc.
 - `retries` (default: 3): How many retries should be attempted.
+- `try_backends` (default: `true`): Whether to retry with different backends.
 - `wait` (default: 5): How many seconds to wait between retries.
 - `failed` (default: `:error`): What to do if the download fails. Either throw
     an exception (`:error`) or display a warning (`:warn`).
