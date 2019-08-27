@@ -13,15 +13,12 @@ include("backends.jl")
 
 const BACKENDS = AbstractBackend[Http()]
 
+_iscurl(curl) = occursin("libcurl", read(`$curl --version`, String))
+
 function __init__()
     Sys.which("wget") !== nothing && pushfirst!(BACKENDS, Wget())
-    # Windows ships a proper cURL starting with 10.0.1803.
-    # Before that, there is an awful Powershell alias which we want to avoid.
-    if Sys.isunix() || (Sys.iswindows() &&
-                        Int(Sys.windows_version().major) >= 10 &&
-                        Int(Sys.windows_version().patch) >= 1803)
-        Sys.which("curl") !== nothing && pushfirst!(BACKENDS, CURL())
-    end
+    curl = Sys.which("curl")
+    curl !== nothing && _iscurl(curl) && pushfirst!(BACKENDS, CURL())
 end
 
 struct DownloadError <: Exception
