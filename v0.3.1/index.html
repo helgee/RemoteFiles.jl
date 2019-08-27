@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Home · RemoteFiles.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="assets/documenter.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link href="assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>RemoteFiles.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li class="current"><a class="toctext" href>Home</a><ul class="internal"><li><a class="toctext" href="#Installation-1">Installation</a></li><li><a class="toctext" href="#Quickstart-1">Quickstart</a></li><li><a class="toctext" href="#Documentation-1">Documentation</a></li></ul></li><li><a class="toctext" href="api/">API</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Home</a></li></ul><a class="edit-page" href="https://github.com/helgee/RemoteFiles.jl/blob/master/docs/src/index.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Home</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="RemoteFiles-1" href="#RemoteFiles-1">RemoteFiles</a></h1><p><em>Download files from the Internet and keep them up-to-date.</em></p><h2><a class="nav-anchor" id="Installation-1" href="#Installation-1">Installation</a></h2><p>The package can be installed through Julia&#39;s package manager:</p><pre><code class="language-julia">Pkg.add(&quot;RemoteFiles&quot;)</code></pre><h2><a class="nav-anchor" id="Quickstart-1" href="#Quickstart-1">Quickstart</a></h2><p>Remote files are declared through the <code>@RemoteFile</code> macro:</p><pre><code class="language-julia">using RemoteFiles
+
+@RemoteFile(JULIA_BINARY, &quot;https://status.julialang.org/download/win64&quot;,
+    file=&quot;julia-nightly-x64.exe&quot;, updates=:daily)
+
+# Download the file if it is out-of-date
+download(JULIA_BINARY)
+
+# Check whether the file has been downloaded
+isfile(JULIA_BINARY)
+
+# Get the path
+path(JULIA_BINARY)</code></pre><p>By default the file is downloaded to <code>Pkg.dir(CURRENT_PACKAGE)/data</code>. This can be customized with the <code>dir</code> keyword argument to the <code>@RemoteFile</code> macro.</p><p><code>RemoteFile</code>s can be grouped together in a <code>RemoteFileSet</code>:</p><pre><code class="language-julia">@RemoteFileSet BINARIES &quot;Julia Binaries&quot; begin
+    win = @RemoteFile &quot;https://julialang-s3.julialang.org/bin/winnt/x64/0.6/julia-0.6.0-win64.exe&quot;
+    osx = @RemoteFile &quot;https://julialang-s3.julialang.org/bin/osx/x64/0.6/julia-0.6.0-osx10.7+.dmg&quot;
+end
+
+# Download all of them
+
+download(BINARIES)</code></pre><p>RemoteFiles.jl will try to download files via the <a href="https://curl.haxx.se/">cURL</a> command-line tool by default and automatically fall back to use <a href="https://www.gnu.org/software/wget/">wget</a> or <a href="https://github.com/JuliaWeb/HTTP.jl">HTTP.jl</a> if the download fails or the respective binaries are not available.</p><h2><a class="nav-anchor" id="Documentation-1" href="#Documentation-1">Documentation</a></h2><p>Continue to the <a href="api/#API-1">API</a> documentation.</p><footer><hr/><a class="next" href="api/"><span class="direction">Next</span><span class="title">API</span></a></footer></article></body></html>
