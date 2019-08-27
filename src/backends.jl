@@ -50,12 +50,14 @@ end
 struct Http <: AbstractBackend end
 nameof(::Http) = "HTTP.jl"
 
+const HEADERS = ["User-Agent" => "RemoteFiles.jl/0.3 (+https://github.com/helgee/RemoteFiles.jl)", "Accept" => "*/*"]
+
 function download(::Http, url, filename; verbose::Bool=false)
     try
         if verbose
-            HTTP.download(url, filename)
+            HTTP.download(url, filename, HEADERS)
         else
-            HTTP.download(url, filename; update_period=typemax(Int))
+            HTTP.download(url, filename, HEADERS; update_period=typemax(Int))
         end
     catch err
         throw(DownloadError((sprint(showerror, err))))
