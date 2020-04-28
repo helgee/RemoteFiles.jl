@@ -11,9 +11,9 @@ function download(::CURL, url, filename; verbose::Bool=false)
     curl === nothing && error("The `curl` executable was not found.")
     try
         if verbose
-            run(`$curl -o $filename -L $url`)
+            run(`$curl -R -z $filename -o $filename -L $url`)
         else
-            run(`$curl -s -o $filename -L $url`)
+            run(`$curl -s -R -z $filename -o $filename -L $url`)
         end
     catch err
         if (isdefined(Base, :ProcessFailedException) &&
