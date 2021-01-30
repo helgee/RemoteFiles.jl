@@ -16,7 +16,7 @@ Download `rf`.
 - `retries`: Override the number of retries in `rf` if `retries != 0`
 """
 function download(rf::RemoteFile; kwargs...)
-    for (i, backend) in enumerate(BACKENDS)
+    for (i, backend) in enumerate(rf.backends)
         try
             if i == 1
                 download(backend, rf; kwargs...)
@@ -99,4 +99,3 @@ function samecontent(file1, file2)
     h2 = hash(open(read, file2, "r"))
     h1 == h2
 end
-
