@@ -9,11 +9,20 @@ nameof(::CURL) = "cURL"
 function download(::CURL, url, filename; verbose::Bool=false)
     curl = Sys.which("curl")
     curl === nothing && error("The `curl` executable was not found.")
+    time = isfile(filename)
+    cmd = `$curl -s -R -o $filename -L $url`
+    time_cmd = `$curl -s -R -z $filename -o $filename -L $url`
+    verb_cmd = `$curl -R -o $filename -L $url`
+    verb_time_cmd = `$curl -R -z $filename -o $filename -L $url`
     try
-        if verbose
-            run(`$curl -R -z $filename -o $filename -L $url`)
+        if verbose && time
+            run(verb_time_cmd)
+        elseif time
+            run(time_cmd)
+        elseif verbose
+            run(verb_cmd)
         else
-            run(`$curl -s -R -z $filename -o $filename -L $url`)
+            run(cmd)
         end
     catch err
         if (isdefined(Base, :ProcessFailedException) &&
