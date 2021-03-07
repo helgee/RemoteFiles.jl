@@ -11,6 +11,7 @@ export DownloadError, RemoteFile, @RemoteFile, path, rm, isfile,
 
 include("backends.jl")
 
+"The list of supported backends on the current machine"
 const BACKENDS = AbstractBackend[Http()]
 
 _iscurl(curl) = occursin("libcurl", read(`$curl --version`, String))
@@ -34,6 +35,7 @@ struct RemoteFile
     updates::Symbol
     retries::Int
     try_backends::Bool
+    backends::Vector{AbstractBackend}
     wait::Int
     failed::Symbol
 end
@@ -76,6 +78,7 @@ function RemoteFile(uri::URI;
     updates::Symbol=:never,
     retries::Int=3,
     try_backends::Bool=true,
+    backends=BACKENDS,
     wait::Int=5,
     failed::Symbol=:error,
 )
@@ -89,7 +92,7 @@ function RemoteFile(uri::URI;
         end
     end
 
-    RemoteFile(uri, file, abspath(dir), updates, retries, try_backends, wait, failed)
+    RemoteFile(uri, file, abspath(dir), updates, retries, try_backends, backends, wait, failed)
 end
 RemoteFile(uri::String; kwargs...) = RemoteFile(URI(uri); kwargs...)
 
@@ -132,6 +135,7 @@ The following keyword arguments are available:
     - `:mondays`/`:weekly`, `:tuesdays`, etc.
 - `retries` (default: 3): How many retries should be attempted.
 - `try_backends` (default: `true`): Whether to retry with different backends.
+- `backends` (default `RemoteFiles.BACKENDS`): Which backends to try.
 - `wait` (default: 5): How many seconds to wait between retries.
 - `failed` (default: `:error`): What to do if the download fails. Either throw
     an exception (`:error`) or display a warning (`:warn`).

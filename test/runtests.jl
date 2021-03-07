@@ -30,9 +30,9 @@ rm("tmp", force=true, recursive=true)
         @test r.file == "image.png"
 
 
-		@test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
-			(:info, r"File 'image.png' was successfully downloaded."),
-			match_mode=:any, download(r, verbose=true))
+	@test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+		   (:info, r"File 'image.png' was successfully downloaded."),
+		   match_mode=:any, download(r, verbose=true))
         @test isfile(r)
         rm(r, force=true)
 
@@ -92,6 +92,31 @@ rm("tmp", force=true, recursive=true)
         @test isfile(r)
         @test isfile(r1)
         rm(dir, force=true, recursive=true)
+    end
+    @testset "RemoteFile backends" begin
+        r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.Http()], file="image.png")
+	@test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+		   (:info, r"File 'image.png' was successfully downloaded."),
+		   match_mode=:any, download(r, verbose=true))
+        @test isfile(r)
+        rm(r, force=true)
+
+        if RemoteFiles.CURL() in RemoteFiles.BACKENDS
+            r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.CURL()], file="image.png")
+	    @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+		       (:info, r"File 'image.png' was successfully downloaded."),
+		       match_mode=:any, download(r, verbose=true))
+            @test isfile(r)
+            rm(r, force=true)
+        end
+        if RemoteFiles.Wget() in RemoteFiles.BACKENDS
+            r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.Wget()], file="image.png")
+	    @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+		       (:info, r"File 'image.png' was successfully downloaded."),
+		       match_mode=:any, download(r, verbose=true))
+            @test isfile(r)
+            rm(r, force=true)
+        end
     end
     @testset "RemoteFileSets" begin
         set = RemoteFileSet("Images",
