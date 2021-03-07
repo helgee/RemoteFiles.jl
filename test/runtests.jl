@@ -22,6 +22,14 @@ rm("tmp", force=true, recursive=true)
         download(RemoteFiles.Http(), "https://httpbin.org/image/png", "image.png")
         @test isfile("image.png")
         rm("image.png", force=true)
+
+        backends = copy(RemoteFiles.BACKENDS)
+        override_backends(RemoteFiles.CURL())
+        @test RemoteFiles.BACKENDS == RemoteFiles.AbstractBackend[RemoteFiles.CURL()]
+        override_backends(RemoteFiles.Wget(), RemoteFiles.CURL())
+        @test RemoteFiles.BACKENDS == RemoteFiles.AbstractBackend[RemoteFiles.Wget(), RemoteFiles.CURL()]
+        reset_backends()
+        @test RemoteFiles.BACKENDS == backends
     end
     @testset "RemoteFile" begin
         r = RemoteFile("https://httpbin.org/image/png")
@@ -30,9 +38,9 @@ rm("tmp", force=true, recursive=true)
         @test r.file == "image.png"
 
 
-	@test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
-		   (:info, r"File 'image.png' was successfully downloaded."),
-		   match_mode=:any, download(r, verbose=true))
+        @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+                   (:info, r"File 'image.png' was successfully downloaded."),
+                   match_mode=:any, download(r, verbose=true))
         @test isfile(r)
         rm(r, force=true)
 
@@ -56,7 +64,7 @@ rm("tmp", force=true, recursive=true)
         r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:never)
         download(r)
         c1 = lastupdate(r)
-		@test_logs (:info, r"File 'image.png' is up-to-date.") download(r, verbose=true)
+        @test_logs (:info, r"File 'image.png' is up-to-date.") download(r, verbose=true)
         c2 = lastupdate(r)
         @test c1 == c2
         rm(r, force=true)
@@ -73,9 +81,9 @@ rm("tmp", force=true, recursive=true)
         r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
         download(r)
         r = RemoteFile("https://garbage/garbage/garbage.garbage", file="image.png",
-            wait=1, retries=1, failed=:warn, updates=:always)
-		@test_logs((:warn, r"Download of 'https://garbage/garbage/garbage.garbage' failed after 1 retries. Local file was not updated."),
-			match_mode=:any, download(r, verbose=true))
+                       wait=1, retries=1, failed=:warn, updates=:always)
+        @test_logs((:warn, r"Download of 'https://garbage/garbage/garbage.garbage' failed after 1 retries. Local file was not updated."),
+                   match_mode=:any, download(r, verbose=true))
         rm(r, force=true)
 
         @RemoteFile r "https://httpbin.org/image/png" file="image.png"
@@ -95,34 +103,34 @@ rm("tmp", force=true, recursive=true)
     end
     @testset "RemoteFile backends" begin
         r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.Http()], file="image.png")
-	@test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
-		   (:info, r"File 'image.png' was successfully downloaded."),
-		   match_mode=:any, download(r, verbose=true))
+        @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+                   (:info, r"File 'image.png' was successfully downloaded."),
+                   match_mode=:any, download(r, verbose=true))
         @test isfile(r)
         rm(r, force=true)
 
         if RemoteFiles.CURL() in RemoteFiles.BACKENDS
             r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.CURL()], file="image.png")
-	    @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
-		       (:info, r"File 'image.png' was successfully downloaded."),
-		       match_mode=:any, download(r, verbose=true))
+            @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+                       (:info, r"File 'image.png' was successfully downloaded."),
+                       match_mode=:any, download(r, verbose=true))
             @test isfile(r)
             rm(r, force=true)
         end
         if RemoteFiles.Wget() in RemoteFiles.BACKENDS
             r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.Wget()], file="image.png")
-	    @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
-		       (:info, r"File 'image.png' was successfully downloaded."),
-		       match_mode=:any, download(r, verbose=true))
+            @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+                       (:info, r"File 'image.png' was successfully downloaded."),
+                       match_mode=:any, download(r, verbose=true))
             @test isfile(r)
             rm(r, force=true)
         end
     end
     @testset "RemoteFileSets" begin
         set = RemoteFileSet("Images",
-            file1=RemoteFile("https://httpbin.org/image/png", file="image1.png"),
-            file2=RemoteFile("https://httpbin.org/image/png", file="image2.png"),
-        )
+                            file1=RemoteFile("https://httpbin.org/image/png", file="image1.png"),
+                            file2=RemoteFile("https://httpbin.org/image/png", file="image2.png"),
+                           )
         rm(set, force=true)
         download(set)
         @test isfile(set[:file1])

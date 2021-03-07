@@ -1,5 +1,3 @@
-__precompile__()
-
 module RemoteFiles
 
 using HTTP: URI
@@ -7,7 +5,8 @@ using HTTP: URI
 import Base: rm, isfile, getindex, download, rm
 
 export DownloadError, RemoteFile, @RemoteFile, path, rm, isfile,
-    RemoteFileSet, @RemoteFileSet, files, paths, download, load
+    RemoteFileSet, @RemoteFileSet, files, paths, download, load,
+    reset_backends, override_backends
 
 include("backends.jl")
 
@@ -17,9 +16,30 @@ const BACKENDS = AbstractBackend[Http()]
 _iscurl(curl) = occursin("libcurl", read(`$curl --version`, String))
 
 function __init__()
+    reset_backends()
+end
+
+"""
+    reset_backends()
+
+Reset backends by re-running auto detection.
+"""
+function reset_backends()
+    empty!(BACKENDS)
+    push!(BACKENDS, Http())
     Sys.which("wget") !== nothing && pushfirst!(BACKENDS, Wget())
     curl = Sys.which("curl")
     curl !== nothing && _iscurl(curl) && pushfirst!(BACKENDS, CURL())
+end
+
+"""
+    override_backends(backends...)
+
+Manually override the auto-detected backends with `backends`.
+"""
+function override_backends(backends...)
+    empty!(BACKENDS)
+    append!(BACKENDS, backends)
 end
 
 struct DownloadError <: Exception
