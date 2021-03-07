@@ -2,7 +2,7 @@
 
 *Download files from the Internet and keep them up-to-date.*
 
-[![Build Status][travis-badge]][travis-url] [![Build status][av-badge]][av-url] [![Coverage Status][coveralls-badge]][coveralls-url] [![codecov.io][codecov-badge]][codecov-url] [![Docs Stable][docs-badge-stable]][docs-url-stable] [![Docs Latest][docs-badge-dev]][docs-url-dev]
+[![Build Status](https://github.com/helgee/RemoteFiles.jl/workflows/CI/badge.svg)](https://github.com/helgee/RemoteFiles.jl/actions) [![codecov.io][codecov-badge]][codecov-url] [![Docs Stable][docs-badge-stable]][docs-url-stable] [![Docs Latest][docs-badge-dev]][docs-url-dev]
 
 ## Installation
 
