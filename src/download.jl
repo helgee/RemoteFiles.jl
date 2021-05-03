@@ -58,6 +58,7 @@ function download(backend, rf::RemoteFile; verbose::Bool=false, quiet::Bool=fals
         try
             download(backend, string(rf.uri), tempfile, verbose=verbose)
             success = true
+            break
         catch err
             if err isa DownloadError
                 if !quiet
