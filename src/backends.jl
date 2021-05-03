@@ -1,7 +1,33 @@
+import Dates
+using Downloads: RequestError, request
+
 import Base: download, nameof
 import HTTP
 
 abstract type AbstractBackend end
+
+struct DownloadsJL <: AbstractBackend end
+nameof(::DownloadsJL) = "Downloads.jl"
+
+const HTTP_FMT = Dates.dateformat"eee, dd UUU yyyy HH:MM:SS G\MT"
+
+function download(::DownloadsJL, url, filename; verbose::Bool=false)
+    headers = Dict{String, String}()
+    if isfile(filename)
+        last_modified = Dates.unix2datetime(stat(filename).mtime)
+        push!(headers, "if-modified-since"=>Dates.format(last_modified, HTTP_FMT))
+    end
+    try
+        resp = request(url; output=filename, headers, verbose)
+        if !(resp.status in (200, 304))
+            throw(DownloadError(resp.message))
+        end
+    catch err
+        err isa RequestError && throw(DownloadError(sprint(showerror, err)))
+        rethrow(err)
+    end
+    return nothing
+end
 
 struct CURL <: AbstractBackend end
 nameof(::CURL) = "cURL"
@@ -32,6 +58,7 @@ function download(::CURL, url, filename; verbose::Bool=false)
             rethrow(err)
         end
     end
+    return nothing
 end
 
 struct Wget <: AbstractBackend end
@@ -54,6 +81,7 @@ function download(::Wget, url, filename; verbose::Bool=false)
             rethrow(err)
         end
     end
+    return nothing
 end
 
 struct Http <: AbstractBackend end
@@ -71,4 +99,5 @@ function download(::Http, url, filename; verbose::Bool=false)
     catch err
         throw(DownloadError((sprint(showerror, err))))
     end
+    return nothing
 end

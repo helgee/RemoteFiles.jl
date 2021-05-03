@@ -26,10 +26,11 @@ Reset backends by re-running auto detection.
 """
 function reset_backends()
     empty!(BACKENDS)
-    push!(BACKENDS, Http())
-    Sys.which("wget") !== nothing && pushfirst!(BACKENDS, Wget())
+    push!(BACKENDS, DownloadsJL())
     curl = Sys.which("curl")
-    curl !== nothing && _iscurl(curl) && pushfirst!(BACKENDS, CURL())
+    curl !== nothing && _iscurl(curl) && push!(BACKENDS, CURL())
+    Sys.which("wget") !== nothing && push!(BACKENDS, Wget())
+    push!(BACKENDS, Http())
 end
 
 """
