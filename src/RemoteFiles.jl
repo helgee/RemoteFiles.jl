@@ -13,8 +13,14 @@ include("backends.jl")
 "The list of supported backends on the current machine"
 const BACKENDS = AbstractBackend[Http()]
 
-_iscurl(curl) = occursin("libcurl", read(`$curl --version`, String))
-_iswget(wget) = occursin("GNU Wget", read(`$wget --version`, String))
+function _iscurl(curl)
+    occursin("curl", curl) || return false
+    return occursin("libcurl", read(`$curl --version`, String))
+end
+function _iswget(wget)
+    occursin("wget", wget) || return false
+    return occursin("GNU Wget", read(`$wget --version`, String))
+end
 
 function __init__()
     reset_backends()
