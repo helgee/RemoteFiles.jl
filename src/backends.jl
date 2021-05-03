@@ -62,7 +62,7 @@ function download(::CURL, url, filename; verbose::Bool=false)
 end
 
 struct Wget <: AbstractBackend end
-nameof(::Wget) = "wget"
+nameof(::Wget) = "Wget"
 
 function download(::Wget, url, filename; verbose::Bool=false)
     wget = Sys.which("wget")

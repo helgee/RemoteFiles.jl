@@ -14,6 +14,7 @@ include("backends.jl")
 const BACKENDS = AbstractBackend[Http()]
 
 _iscurl(curl) = occursin("libcurl", read(`$curl --version`, String))
+_iswget(wget) = occursin("GNU Wget", read(`$wget --version`, String))
 
 function __init__()
     reset_backends()
@@ -29,7 +30,8 @@ function reset_backends()
     push!(BACKENDS, DownloadsJL())
     curl = Sys.which("curl")
     curl !== nothing && _iscurl(curl) && push!(BACKENDS, CURL())
-    Sys.which("wget") !== nothing && push!(BACKENDS, Wget())
+    wget = Sys.which("wget")
+    wget !== nothing && _iswget(wget) && push!(BACKENDS, Wget())
     push!(BACKENDS, Http())
 end
 
