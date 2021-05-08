@@ -13,6 +13,7 @@ Download `rf`.
 - `quiet`: Do not print messages.
 - `verbose`: Print all messages.
 - `force`: Force download and overwrite existing files.
+- `force_update`: Overwrite existing files even if they are equal.
 - `retries`: Override the number of retries in `rf` if `retries != 0`
 """
 function download(rf::RemoteFile; kwargs...)
@@ -33,7 +34,7 @@ function download(rf::RemoteFile; kwargs...)
 end
 
 function download(backend, rf::RemoteFile; verbose::Bool=false, quiet::Bool=false,
-    force::Bool=false, retries::Int=0)
+    force::Bool=false, force_update::Bool=false, retries::Int=0)
     file = joinpath(rf.dir, rf.file)
     retries = retries != 0 ? retries : rf.retries
 
@@ -74,7 +75,7 @@ function download(backend, rf::RemoteFile; verbose::Bool=false, quiet::Bool=fals
     if success
         update = true
         if isfile(file) && !force
-            if samecontent(tempfile, file)
+            if !force_update && samecontent(tempfile, file)
                 update = false
                 verbose && @info "File '$(rf.file)' has not changed. Update skipped."
             else
