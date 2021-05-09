@@ -321,7 +321,7 @@ Download all files contained in `rfs`.
 - `force`: Force download and overwrite existing files.
 - `force_update`: Overwrite existing files even if they are equal.
 """
-function download(rfs::RemoteFileSet; kwargs...)
+function download(rfs::RemoteFileSet; verbose::Bool=false, kwargs...)
     verbose && @info "Downloading file set '$(rfs.name)'."
     @sync for file in values(rfs.files)
         @async download(file; kwargs...)
