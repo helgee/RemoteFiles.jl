@@ -319,11 +319,13 @@ Download all files contained in `rfs`.
 - `quiet`: Do not print messages.
 - `verbose`: Print all messages.
 - `force`: Force download and overwrite existing files.
+- `force_update`: Overwrite existing files even if they are equal.
 """
-function download(rfs::RemoteFileSet; quiet::Bool=false, verbose::Bool=false, force::Bool=false)
+function download(rfs::RemoteFileSet; quiet::Bool=false, verbose::Bool=false, force::Bool=false,
+    force_update::Bool=false)
     verbose && @info "Downloading file set '$(rfs.name)'."
     @sync for file in values(rfs.files)
-        @async download(file, quiet=verbose, verbose=verbose, force=force)
+        @async download(file, quiet=verbose, verbose=verbose, force=force, force_update=force_update)
     end
 end
 
