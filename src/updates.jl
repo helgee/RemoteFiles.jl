@@ -13,7 +13,7 @@ const upfun = Dict(
         firstdayofmonth(now) > firstdayofmonth(last),
     :yearly => (last, now) -> year(now) > year(last),
     :mondays => (last, now) -> daycomp(last, now, 1),
-    :weekly => (last, now) -> daycomp(last, now, 1),
+    :weekly => (last, now) -> days(now - last) ≥ 7,
     :tuesdays => (last, now) -> daycomp(last, now, 2),
     :wednesdays => (last, now) -> daycomp(last, now, 3),
     :thursdays => (last, now) -> daycomp(last, now, 4),
