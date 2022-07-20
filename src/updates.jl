@@ -9,8 +9,7 @@ const upfun = Dict(
     :never => (last, now) -> false,
     :always => (last, now) -> true,
     :daily => (last, now) -> Date(now) > Date(last),
-    :monthly => (last, now) ->
-        firstdayofmonth(now) > firstdayofmonth(last),
+    :monthly => (last, now) -> days(now - last) ≥ 30,
     :yearly => (last, now) -> year(now) > year(last),
     :mondays => (last, now) -> daycomp(last, now, 1),
     :weekly => (last, now) -> days(now - last) ≥ 7,
