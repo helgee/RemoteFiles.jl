@@ -1,4 +1,4 @@
-import Dates: year, toprev, firstdayofmonth, Date
+import Dates: year, toprev, firstdayofmonth, Date, days, UTC
 
 export isoutdated, lastupdate
 
@@ -32,4 +32,4 @@ function isoutdated(last, now, updates)
     upfun[updates](last, now)
 end
 
-isoutdated(rf::RemoteFile) = isoutdated(lastupdate(rf), now(), rf.updates)
+isoutdated(rf::RemoteFile) = isoutdated(lastupdate(rf), now(UTC), rf.updates)
