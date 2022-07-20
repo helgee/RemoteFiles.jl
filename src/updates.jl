@@ -8,7 +8,7 @@ daycomp(last, now, dow) = Date(toprev(now, dow, same=true)) >
 const upfun = Dict(
     :never => (last, now) -> false,
     :always => (last, now) -> true,
-    :daily => (last, now) -> Date(now) > Date(last),
+    :daily => (last, now) -> days(now - last) ≥ 1,
     :monthly => (last, now) -> days(now - last) ≥ 30,
     :yearly => (last, now) -> days(now - last) ≥ 365,
     :mondays => (last, now) -> daycomp(last, now, 1),
