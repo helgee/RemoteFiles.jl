@@ -1,4 +1,4 @@
-import Dates: year, toprev, firstdayofmonth, Date
+import Dates: year, toprev, firstdayofmonth, Date, days, UTC
 
 export isoutdated, lastupdate
 
@@ -8,12 +8,11 @@ daycomp(last, now, dow) = Date(toprev(now, dow, same=true)) >
 const upfun = Dict(
     :never => (last, now) -> false,
     :always => (last, now) -> true,
-    :daily => (last, now) -> Date(now) > Date(last),
-    :monthly => (last, now) ->
-        firstdayofmonth(now) > firstdayofmonth(last),
-    :yearly => (last, now) -> year(now) > year(last),
+    :daily => (last, now) -> days(now - last) ≥ 1,
+    :monthly => (last, now) -> days(now - last) ≥ 30,
+    :yearly => (last, now) -> days(now - last) ≥ 365,
     :mondays => (last, now) -> daycomp(last, now, 1),
-    :weekly => (last, now) -> daycomp(last, now, 1),
+    :weekly => (last, now) -> days(now - last) ≥ 7,
     :tuesdays => (last, now) -> daycomp(last, now, 2),
     :wednesdays => (last, now) -> daycomp(last, now, 3),
     :thursdays => (last, now) -> daycomp(last, now, 4),
@@ -32,4 +31,4 @@ function isoutdated(last, now, updates)
     upfun[updates](last, now)
 end
 
-isoutdated(rf::RemoteFile) = isoutdated(lastupdate(rf), now(), rf.updates)
+isoutdated(rf::RemoteFile) = isoutdated(lastupdate(rf), now(UTC), rf.updates)

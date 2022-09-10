@@ -231,27 +231,39 @@ rm("tmp", force=true, recursive=true)
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
         @test RemoteFiles.isoutdated(last, now, updates) == false
+        last = DateTime(2017, 2, 28)
+        now = DateTime(2018, 2, 27)
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :monthly
-        last = DateTime(2017, 2, 28)
+        last = DateTime(2017, 2, 4)
         now = DateTime(2017, 3, 6)
         @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 2, 20)
         @test RemoteFiles.isoutdated(last, now, updates) == false
+        last = DateTime(2017, 2, 28)
+        now = DateTime(2017, 3, 6)
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :weekly
         last = DateTime(2017, 2, 28)
-        now = DateTime(2017, 3, 6)
+        now = DateTime(2017, 3, 7)
         @test RemoteFiles.isoutdated(last, now, updates) == true
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 3, 1)
         @test RemoteFiles.isoutdated(last, now, updates) == false
+        last = DateTime(2017, 2, 28)
+        now = DateTime(2017, 3, 6)
+        @test RemoteFiles.isoutdated(last, now, updates) == false
 
         updates = :daily
-        last = DateTime(2017, 2, 28)
-        now = DateTime(2017, 3, 1)
+        last = DateTime(2017, 2, 28, 12, 00, 00)
+        now = DateTime(2017, 3, 1, 12, 00, 01)
         @test RemoteFiles.isoutdated(last, now, updates) == true
+        last = DateTime(2017, 2, 28, 12, 00, 00)
+        now = DateTime(2017, 3, 1, 11, 59, 59)
+        @test RemoteFiles.isoutdated(last, now, updates) == false
         last = DateTime(2017, 2, 28)
         now = DateTime(2017, 2, 28)
         @test RemoteFiles.isoutdated(last, now, updates) == false
