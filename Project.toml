@@ -1,15 +1,18 @@
 name = "RemoteFiles"
 uuid = "cbe49d4c-5af1-5b60-bb70-0a60aa018e1b"
-version = "0.5.0"
+version = "0.5.1"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
-HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+URIs = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
 
 [compat]
+Dates = "1"
+Downloads = "1"
 FileIO = "1.6"
-HTTP = "1"
+URIs = "1"
 julia = "1.6"
 
 [extras]

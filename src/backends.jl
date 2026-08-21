@@ -1,5 +1,5 @@
 import Base: download, nameof
-import HTTP
+import Downloads
 
 abstract type AbstractBackend end
 
@@ -56,18 +56,17 @@ function download(::Wget, url, filename; verbose::Bool=false)
     end
 end
 
-struct Http <: AbstractBackend end
-nameof(::Http) = "HTTP.jl"
+struct Downloader <: AbstractBackend end
+nameof(::Downloader) = "Downloads.jl"
 
-const HEADERS = ["User-Agent" => "RemoteFiles.jl/0.3 (+https://github.com/helgee/RemoteFiles.jl)", "Accept" => "*/*"]
+"Alias kept so code written against the former HTTP.jl backend keeps working."
+const Http = Downloader
 
-function download(::Http, url, filename; verbose::Bool=false)
+const HEADERS = ["User-Agent" => "RemoteFiles.jl/0.5 (+https://github.com/helgee/RemoteFiles.jl)", "Accept" => "*/*"]
+
+function download(::Downloader, url, filename; verbose::Bool=false)
     try
-        if verbose
-            HTTP.download(url, filename, HEADERS)
-        else
-            HTTP.download(url, filename, HEADERS; update_period=typemax(Int))
-        end
+        Downloads.download(url, filename; headers=HEADERS, verbose=verbose)
     catch err
         throw(DownloadError((sprint(showerror, err))))
     end

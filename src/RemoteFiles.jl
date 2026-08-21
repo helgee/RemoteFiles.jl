@@ -1,6 +1,6 @@
 module RemoteFiles
 
-using HTTP: URI
+using URIs: URI
 
 import Base: rm, isfile, getindex, download, rm
 
@@ -11,7 +11,7 @@ export DownloadError, RemoteFile, @RemoteFile, path, rm, isfile,
 include("backends.jl")
 
 "The list of supported backends on the current machine"
-const BACKENDS = AbstractBackend[Http()]
+const BACKENDS = AbstractBackend[Downloader()]
 
 _iscurl(curl) = occursin("libcurl", read(`$curl --version`, String))
 
@@ -26,7 +26,7 @@ Reset backends by re-running auto detection.
 """
 function reset_backends()
     empty!(BACKENDS)
-    push!(BACKENDS, Http())
+    push!(BACKENDS, Downloader())
     Sys.which("wget") !== nothing && pushfirst!(BACKENDS, Wget())
     curl = Sys.which("curl")
     curl !== nothing && _iscurl(curl) && pushfirst!(BACKENDS, CURL())

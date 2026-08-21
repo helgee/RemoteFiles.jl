@@ -50,7 +50,7 @@ Note that there is also a function-interface with `RemoteFile` and
 
 RemoteFiles.jl will try to download files via the [cURL](https://curl.haxx.se/) command-line tool
 by default and automatically fall back to use [wget](https://www.gnu.org/software/wget/) or
-[HTTP.jl](https://github.com/JuliaWeb/HTTP.jl) if the download fails or the respective binaries
+Julia's [`Downloads`](https://docs.julialang.org/en/v1/stdlib/Downloads/) standard library if the download fails or the respective binaries
 are not available.
 
 ## Documentation
