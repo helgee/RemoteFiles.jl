@@ -8,18 +8,20 @@ rm("tmp", force=true, recursive=true)
 @testset "RemoteFiles" begin
     @testset "Backends" begin
         if RemoteFiles.CURL() in RemoteFiles.BACKENDS
-            download(RemoteFiles.CURL(), "https://httpbin.org/image/png", "image.png")
+            download(RemoteFiles.CURL(), "https://httpbingo.org/image/png", "image.png")
             @test isfile("image.png")
             rm("image.png", force=true)
         end
 
         if RemoteFiles.Wget() in RemoteFiles.BACKENDS
-            download(RemoteFiles.Wget(), "https://httpbin.org/image/png", "image.png")
+            download(RemoteFiles.Wget(), "https://httpbingo.org/image/png", "image.png")
             @test isfile("image.png")
             rm("image.png", force=true)
         end
 
-        download(RemoteFiles.Http(), "https://httpbin.org/image/png", "image.png")
+        @test RemoteFiles.Http === RemoteFiles.Downloader
+
+        download(RemoteFiles.Downloader(), "https://httpbingo.org/image/png", "image.png")
         @test isfile("image.png")
         rm("image.png", force=true)
 
@@ -32,19 +34,19 @@ rm("tmp", force=true, recursive=true)
         @test RemoteFiles.BACKENDS == backends
     end
     @testset "RemoteFile" begin
-        r = RemoteFile("https://httpbin.org/image/png")
+        r = RemoteFile("https://httpbingo.org/image/png")
         @test r.file == "png"
-        r = RemoteFile("https://httpbin.org/image/png", file="image.png")
+        r = RemoteFile("https://httpbingo.org/image/png", file="image.png")
         @test r.file == "image.png"
 
 
-        @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+        @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbingo.org/image/png'."),
                    (:info, r"File 'image.png' was successfully downloaded."),
                    match_mode=:any, download(r, verbose=true))
         @test isfile(r)
         rm(r, force=true)
 
-        r = RemoteFile("https://httpbin.org/image/png", file="image.png", dir="tmp")
+        r = RemoteFile("https://httpbingo.org/image/png", file="image.png", dir="tmp")
         download(r)
         @test isfile(r)
         rm(r, force=true)
@@ -61,7 +63,7 @@ rm("tmp", force=true, recursive=true)
         r = RemoteFile("https://garbage/garbage/garbage.garbage", wait=0, retries=0, failed=:warn)
         @test_throws DownloadError download(r)
 
-        r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:never)
+        r = RemoteFile("https://httpbingo.org/image/png", file="image.png", updates=:never)
         download(r)
         c1 = lastupdate(r)
         @test_logs (:info, r"File 'image.png' is up-to-date.") download(r, verbose=true)
@@ -69,7 +71,7 @@ rm("tmp", force=true, recursive=true)
         @test c1 == c2
         rm(r, force=true)
 
-        r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
+        r = RemoteFile("https://httpbingo.org/image/png", file="image.png", updates=:always)
         download(r)
         c1 = lastupdate(r)
         sleep(1)
@@ -78,7 +80,7 @@ rm("tmp", force=true, recursive=true)
         @test c1 == c2
         rm(r, force=true)
 
-        r = RemoteFile("https://httpbin.org/image/png", file="image.png", updates=:always)
+        r = RemoteFile("https://httpbingo.org/image/png", file="image.png", updates=:always)
         download(r)
         r = RemoteFile("https://garbage/garbage/garbage.garbage", file="image.png",
                        wait=1, retries=1, failed=:warn, updates=:always)
@@ -86,14 +88,14 @@ rm("tmp", force=true, recursive=true)
                    match_mode=:any, download(r, verbose=true))
         rm(r, force=true)
 
-        @RemoteFile r "https://httpbin.org/image/png" file="image.png"
+        @RemoteFile r "https://httpbingo.org/image/png" file="image.png"
         download(r)
         @test isfile(r)
         rm(r, force=true)
 
         dir = "data"
-        @RemoteFile r "https://httpbin.org/image/png" file="image.png" dir=dir
-        r1 = @RemoteFile "https://httpbin.org/image/png" file="image.png" dir=dir
+        @RemoteFile r "https://httpbingo.org/image/png" file="image.png" dir=dir
+        r1 = @RemoteFile "https://httpbingo.org/image/png" file="image.png" dir=dir
         download(r)
         download(r1)
         @test isdir(dir)
@@ -102,24 +104,24 @@ rm("tmp", force=true, recursive=true)
         rm(dir, force=true, recursive=true)
     end
     @testset "RemoteFile backends" begin
-        r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.Http()], file="image.png")
-        @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+        r = RemoteFile("https://httpbingo.org/image/png", backends=[RemoteFiles.Downloader()], file="image.png")
+        @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbingo.org/image/png'."),
                    (:info, r"File 'image.png' was successfully downloaded."),
                    match_mode=:any, download(r, verbose=true))
         @test isfile(r)
         rm(r, force=true)
 
         if RemoteFiles.CURL() in RemoteFiles.BACKENDS
-            r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.CURL()], file="image.png")
-            @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+            r = RemoteFile("https://httpbingo.org/image/png", backends=[RemoteFiles.CURL()], file="image.png")
+            @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbingo.org/image/png'."),
                        (:info, r"File 'image.png' was successfully downloaded."),
                        match_mode=:any, download(r, verbose=true))
             @test isfile(r)
             rm(r, force=true)
         end
         if RemoteFiles.Wget() in RemoteFiles.BACKENDS
-            r = RemoteFile("https://httpbin.org/image/png", backends=[RemoteFiles.Wget()], file="image.png")
-            @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbin.org/image/png'."),
+            r = RemoteFile("https://httpbingo.org/image/png", backends=[RemoteFiles.Wget()], file="image.png")
+            @test_logs((:info, r"Downloading file 'image.png' from 'https://httpbingo.org/image/png'."),
                        (:info, r"File 'image.png' was successfully downloaded."),
                        match_mode=:any, download(r, verbose=true))
             @test isfile(r)
@@ -128,8 +130,8 @@ rm("tmp", force=true, recursive=true)
     end
     @testset "RemoteFileSets" begin
         set = RemoteFileSet("Images",
-                            file1=RemoteFile("https://httpbin.org/image/png", file="image1.png"),
-                            file2=RemoteFile("https://httpbin.org/image/png", file="image2.png"),
+                            file1=RemoteFile("https://httpbingo.org/image/png", file="image1.png"),
+                            file2=RemoteFile("https://httpbingo.org/image/png", file="image2.png"),
                            )
         rm(set, force=true)
         download(set)
@@ -141,8 +143,8 @@ rm("tmp", force=true, recursive=true)
         rm(set)
 
         @RemoteFileSet set "Images" begin
-            file1 = @RemoteFile "https://httpbin.org/image/png" file="image1.png"
-            file2 = @RemoteFile "https://httpbin.org/image/png" file="image2.png"
+            file1 = @RemoteFile "https://httpbingo.org/image/png" file="image1.png"
+            file2 = @RemoteFile "https://httpbingo.org/image/png" file="image2.png"
         end
         download(set)
         @test isfile(set, :file1)
@@ -154,7 +156,7 @@ rm("tmp", force=true, recursive=true)
 
         dir = "data"
         @RemoteFileSet set "Images" begin
-            file1 = @RemoteFile "https://httpbin.org/image/png" file="image1.png" dir=dir
+            file1 = @RemoteFile "https://httpbingo.org/image/png" file="image1.png" dir=dir
         end
         download(set)
         @test isdir(dir)
